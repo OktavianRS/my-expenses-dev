@@ -31,9 +31,10 @@ app.configure('production', function(){
 
 // Setup for auth
 passport.serializeUser(function(user, done) {
-   done(null, user.username); 
+   done(null, user); 
 });
 
+// может работать не правильно user - username
 passport.deserializeUser(function(username, done) {
    done(null, {username: username}); 
 });
@@ -49,30 +50,28 @@ passport.use(new LocalStrategy(
 
 // Routes
 app.get('/', function (req, res) { res.redirect('/login') });
-app.get('/home', routes.home)
+app.get('/home', routes.home);
 app.get('/login', routes.login);
 app.get('/registration', routes.registration);
 app.use(function(req, res) {
    res.send("Page Not Found Sorry"); 
 });
+app.get('/user_not_found', routes.loginUndef);
 
-app.get('/users', function(req, res, next) {
-    User.find({}, function(err, users) {
-       if (err) return next(err);
-        res.json(users);
-    });
+app.get('/user', function(req, res, next) {
+        res.json(req.session.passport);
 });
 
-app.get('/users/:id', function(req, res, next) {
-   User.findById(req.params.id, function(err, user){
-       if (!user) {
-           res.send(404, "User not found");
-           next();
-       }
-       if (err) return next(err);
-        res.json(user);
-   }) 
-});
+//app.get('/users/:id', function(req, res, next) {
+//   User.findById(req.params.id, function(err, user){
+//       if (!user) {
+//           res.send(404, "User not found");
+//           next();
+//       }
+//       if (err) return next(err);
+//        res.json(user);
+//   }) 
+//});
 
 app.use(function(err, req, res, next) {
    if (app.get('env') == 'development') {
@@ -85,9 +84,24 @@ app.use(function(err, req, res, next) {
 
 
 
-app.post('/login', passport.authenticate('local', { successRedirect: '/users',
-    failureRedirect: '/login' }));
+app.post('/login', function(req, res, next) {
+    passport.authenticate('local', { 
+        successRedirect: '/user',
+        failureRedirect: '/user_not_found'
+    })(req, res,next);
+});
 
+app.post('/registration', function(req, res, next) {
+   User.create(req.body.username, req.body.password, function(err, user) {
+        if (err) {
+            res.send(500, 'Error registering user');
+        } else {
+            console.log(user[1]);
+            req.session.passport = user[1];
+            res.redirect('/user'); 
+        }
+   });
+});
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

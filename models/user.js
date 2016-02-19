@@ -60,4 +60,36 @@ schema.statics.authorize = function(username, password, callback) {
         ], callback);
 };
 
+schema.statics.create = function(username, password, callback) {
+    mongoose.set('debug', true);
+  async.series([
+      requireModels,
+      createUsers
+  ], function(err, results) {
+      if(err) {
+          callback(err);
+      }else{
+          callback(null, arguments[1]);
+      }
+  });
+    
+    function open(callback) {
+        mongoose.connection.on('open', callback);
+        callback();
+    }
+    
+    function requireModels(callback) {
+        console.log(2);
+        async.each(Object.keys(mongoose.models), function(modelName, callback) {
+            mongoose.models[modelName].ensureIndexes(callback); 
+        }, callback);
+    }
+    
+    function createUsers(callback) {
+        var users =         { username : username, password : password };
+        var user = new mongoose.models.User(users);
+        user.save(callback);
+    };
+};
+
 var User = exports.User = mongoose.model('User', schema);

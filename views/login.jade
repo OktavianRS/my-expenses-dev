@@ -1,9 +1,7 @@
-link(rel="stylesheet", href="customCss/login.css")
-link(rel="stylesheet", href="css/components/notify.almost-flat.css")
 .uk-container-center.signInCenter
     .uk-vertical-align-middle(style="width: 250px;")
         .uk-container.uk-container-center.uk-margin-bottom
-            i.uk-icon-credit-card(style="font-size: 100px; display: block; margin: auto; width: 107px;")
+            i.uk-icon-user(style="font-size: 100px; display: block; margin: auto; width: 107px;")
         form.uk-panel.uk-panel-box.uk-form(class="form-signin", action="/login", method="post")
             .uk-form-row
                 input.uk-width-1-1.uk-form-large(name="username", type="text", placeholder="Username")
@@ -12,7 +10,6 @@ link(rel="stylesheet", href="css/components/notify.almost-flat.css")
             .uk-form-row
                 button.uk-width-1-1.uk-button.uk-button-primary.uk-button-large(type="submit") Login
             .uk-form-row.uk-text-small
-                a.uk-float-left.uk-link.uk-link-muted(href="#") Forgot password ?
                 a.uk-float-right.uk-link.uk-link-primary(href="/registration") Create an account
             .uk-form-row
                 a.uk-width-1-4.uk-button.uk-button-danger(href="#")
@@ -20,4 +17,4 @@ link(rel="stylesheet", href="css/components/notify.almost-flat.css")
                 a.uk-width-1-4.uk-button.uk-button-primary(href="#")
                     i.uk-icon-facebook
 script(src="/js/components/notify.js")
-script(src="/js/custom.js")
+script= script

@@ -1,0 +1,20 @@
+.uk-container-center.signInCenter
+    .uk-vertical-align-middle(style="width: 250px;")
+        .uk-container.uk-container-center.uk-margin-bottom
+            i.uk-icon-user-plus(style="font-size: 100px; display: block; margin: auto; width: 107px;")
+        form.uk-panel.uk-panel-box.uk-form(class="form-signin", action="/registration", method="post")
+            .uk-form-row
+                input.uk-width-1-1.uk-form-large(name="username", type="text", placeholder="Username")
+            .uk-form-row
+                input.uk-width-1-1.uk-form-large(name="password", type="password", placeholder="Password")
+            .uk-form-row
+                button.uk-width-1-1.uk-button.uk-button-primary.uk-button-large(type="submit") create account
+            .uk-form-row.uk-text-small
+                a.uk-float-right.uk-link.uk-link-primary(href="/login") Log into existing account
+            .uk-form-row
+                a.uk-width-1-4.uk-button.uk-button-danger(href="#")
+                    i.uk-icon-google-plus
+                a.uk-width-1-4.uk-button.uk-button-primary(href="#")
+                    i.uk-icon-facebook
+script(src="/js/components/notify.js")
+script= script

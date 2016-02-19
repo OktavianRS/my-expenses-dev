@@ -10,7 +10,7 @@ async.series([
     createUsers
 ], function(err, results) {
     mongoose.disconnect();
-    console.log(arguments[0].code);
+    console.log(arguments);
 });
 
 function open(callback) {
@@ -26,7 +26,7 @@ function requireModels(callback) {
 }
 
 function createUsers(callback) {
-    var users =         { username : "admin", password : "pass" };
+    var users =         { username : "another", password : "one" };
        var user = new mongoose.models.User(users);
         user.save(callback);
 };
