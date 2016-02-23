@@ -9,6 +9,10 @@ exports.login = function(req, res){
   })
 };
 
+exports.loader = function(req, res) {
+    res.render('loader');
+};
+
 exports.loginUndef = function(req, res) {
     res.render('login', {
         title: "User not found",
@@ -22,8 +26,15 @@ exports.registration = function(req, res) {
     })
 };
 
+exports.registrationFail = function(req, res) {
+  res.render('registration', {
+      title : "Registration",
+      script : "UIkit.notify('User alredy exist');"
+  })  
+};
+
 exports.home = function(req, res) {
-    res.render('index', {
-        title: 'express'
-    })
+  res.render('home', {
+    scriptHref: '/js/user/user.js'  
+  })  
 };

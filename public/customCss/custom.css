@@ -1,0 +1,94 @@
+
+
+#pagePreloader {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/backgroundLoader.jpg');
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    background-size: cover;
+    z-index: 100500;
+}
+
+#spinner {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: url('/images/preloader.gif') no-repeat 50% 50%;
+    margin: -75px 0 0 -75px;
+    z-index: 100501;
+}
+
+#welcomeText {
+    z-index: 100502;
+    position: absolute;
+    top: 25%;
+    text-align: center;
+    left: 0;
+    right: 0;
+    font-size: 8vw;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+#preloadDescription {
+    z-index: 100502;
+    position: absolute;
+    top: 70%;
+    text-align: center;
+    left: 0;
+    right: 0;
+    font-size: 3vw;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+html {
+    background: url(../images/blurred-image-7588-7881-hd-wallpapers.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    width: 100%;
+}
+
+.signInCenter {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);        
+}
+
+.close {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #1ABC9C;
+    position: absolute;
+    right: 2%;
+    top: 2%;
+    cursor: pointer;
+}
+
+.close:hover .uk-icon-close{
+    transition: all .3s;
+    transform: rotate(90deg);
+}
+
+.close i {
+    transition: all .3s;
+    font-size: 40px;
+    color: #fff;
+    margin: 4px 9px;
+}

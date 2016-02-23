@@ -49,29 +49,33 @@ passport.use(new LocalStrategy(
 ));
 
 // Routes
-app.get('/', function (req, res) { res.redirect('/login') });
-app.get('/home', routes.home);
+app.get('/', function(req, res) {
+    if(!req.cookies.disablepreloaderforapp) {
+        res.redirect('/welcome');
+    } else {
+        res.redirect('/login');
+    }
+});
+app.get('/welcome', routes.loader);
 app.get('/login', routes.login);
 app.get('/registration', routes.registration);
+app.get('/registration-failed', routes.registrationFail);
+
 app.use(function(req, res) {
    res.send("Page Not Found Sorry"); 
 });
+
 app.get('/user_not_found', routes.loginUndef);
 
 app.get('/user', function(req, res, next) {
-        res.json(req.session.passport);
+    if(req.user) {
+        res.render('user', {
+            username: req.user.username.username
+        });
+    }else {
+        res.redirect('/');
+    }
 });
-
-//app.get('/users/:id', function(req, res, next) {
-//   User.findById(req.params.id, function(err, user){
-//       if (!user) {
-//           res.send(404, "User not found");
-//           next();
-//       }
-//       if (err) return next(err);
-//        res.json(user);
-//   }) 
-//});
 
 app.use(function(err, req, res, next) {
    if (app.get('env') == 'development') {
@@ -82,8 +86,6 @@ app.use(function(err, req, res, next) {
    }
 });
 
-
-
 app.post('/login', function(req, res, next) {
     passport.authenticate('local', { 
         successRedirect: '/user',
@@ -92,15 +94,31 @@ app.post('/login', function(req, res, next) {
 });
 
 app.post('/registration', function(req, res, next) {
-   User.create(req.body.username, req.body.password, function(err, user) {
-        if (err) {
-            res.send(500, 'Error registering user');
-        } else {
-            console.log(user[1]);
-            req.session.passport = user[1];
-            res.redirect('/user'); 
+    User.findOne({username : req.body.username }, function(err, result) {
+        if(err) {
+            next(err);
         }
-   });
+        if(result) {
+            res.redirect('/registration-failed');
+        }
+        else {
+            User.create(req.body.username, req.body.password, function(err, user) {
+                if (err) {
+                    res.send(500, 'Error registering user');
+                } else {
+                    req.login(user, function(err) {
+                        if (err) { return next(err); }
+                        return res.redirect('/user/');
+                    });
+                }
+            });//end of create
+        }// end of else
+    });// end of findOne
+});
+
+app.get('/auth/logout', function(req, res) {
+    req.logout();
+    res.redirect('/');
 });
 
 app.listen(3000, function(){

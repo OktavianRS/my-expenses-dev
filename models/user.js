@@ -61,7 +61,6 @@ schema.statics.authorize = function(username, password, callback) {
 };
 
 schema.statics.create = function(username, password, callback) {
-    mongoose.set('debug', true);
   async.series([
       requireModels,
       createUsers
@@ -69,7 +68,7 @@ schema.statics.create = function(username, password, callback) {
       if(err) {
           callback(err);
       }else{
-          callback(null, arguments[1]);
+          callback(null, arguments[1][1][0]);
       }
   });
     
@@ -79,7 +78,6 @@ schema.statics.create = function(username, password, callback) {
     }
     
     function requireModels(callback) {
-        console.log(2);
         async.each(Object.keys(mongoose.models), function(modelName, callback) {
             mongoose.models[modelName].ensureIndexes(callback); 
         }, callback);
