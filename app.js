@@ -1,11 +1,11 @@
 /**
  * Module dependencies.
  */
-var express = require('express')
+var express = require('express') 
       ,routes = require('./routes')
-      ,app = module.exports = express.createServer()
-      ,passport = require('passport')
-      ,LocalStrategy = require('passport-local').Strategy
+      ,app = module.exports = express.createServer() 
+      ,passport = require('passport') 
+      ,LocalStrategy = require('passport-local').Strategy 
       ,User = require(__dirname + '/models/user').User;
 // Configuration
 app.configure(function(){
@@ -108,7 +108,7 @@ app.post('/registration', function(req, res, next) {
                 } else {
                     req.login(user, function(err) {
                         if (err) { return next(err); }
-                        return res.redirect('/user/');
+                        return res.redirect('/user');
                     });
                 }
             });//end of create

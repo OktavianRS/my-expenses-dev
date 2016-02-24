@@ -81,14 +81,81 @@ html {
     cursor: pointer;
 }
 
-.close:hover .uk-icon-close{
-    transition: all .3s;
-    transform: rotate(90deg);
+.close:hover .xOne{
+    transition: all .8s;
+    transform: rotate(130deg);
 }
 
-.close i {
+.close:hover .xTwo{
+    transition: all .8s;
+    transform: rotate(-130deg);
+}
+
+.close span{
+    transition: all .8s;
+    background: #fff;
+    width: 40px;
+    height: 10px;
+    display: block;
+    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -5px -20px;
+}
+
+.close .xOne {
+        transform: rotate(45deg);
+}
+
+.close .xTwo {
+        transform: rotate(-45deg);
+}
+
+.leftButton {
+    left: 0;
+}
+
+.leftButton:hover {
+    background: rgba(142, 64, 64, 0.47);
+}
+
+.rightButton:hover {
+    background: rgba(59, 122, 168, 0.47);
+}
+
+.rightButton {
+    right: 0;
+}
+
+.leftButton,
+.rightButton {
+    cursor: pointer;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.leftButton:hover .newExpenses {
+    font-size: 6vw;
     transition: all .3s;
-    font-size: 40px;
+} 
+
+.rightButton:hover .viewExpenses {
+    font-size: 6vw;
+    transition: all .3s;
+}
+
+.newExpenses,
+.viewExpenses {
+    transition: all .3s;
+    font-size: 5vw;
+    text-transform: uppercase;
     color: #fff;
-    margin: 4px 9px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    text-align: center;
 }

@@ -1,6 +1,12 @@
+.uk-grid
+    .uk-width-1-2.leftButton
+        .newExpenses New expenses
+    .uk-width-1-2.rightButton
+        .viewExpenses View expenses
 link(rel='stylesheet', href='/css/components/tooltip.almost-flat.min.css')
 a(href="/auth/logout",data-uk-tooltip="{pos:'left'}", title="logout", class="close")
-    i.uk-icon-close
+    span.xOne
+    span.xTwo
 script(src="/js/components/notify.js")
 script(src="/js/components/tooltip.js")
 script UIkit.notify('Hello #{username}');// have an error
