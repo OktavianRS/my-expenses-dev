@@ -38,3 +38,9 @@ exports.home = function(req, res) {
     scriptHref: '/js/user/user.js'  
   })  
 };
+
+exports.newExpenses = function(req, res) {
+  res.render('newExpenses', {
+      
+  })  
+};

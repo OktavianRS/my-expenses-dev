@@ -1,5 +1,5 @@
 doctype
-html
+html(ng-app="myApp")
   head
     title= title
     link(rel='stylesheet', href='/css/uikit.almost-flat.min.css')
@@ -8,4 +8,4 @@ html
     link(rel="stylesheet", href="css/components/notify.almost-flat.css")
   script(src="/js/jquery.min.js")
   script(src="/js/uikit.js")
-  body!= body
+  body(ng-controller="AppCtrl")!= body

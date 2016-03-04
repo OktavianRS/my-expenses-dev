@@ -1,3 +1,30 @@
+::-webkit-input-placeholder {
+    text-align: center;
+    color: #000;
+}
+::-moz-placeholder          {
+    text-align: center;
+    color: #000;
+}/* Firefox 19+ */
+:-moz-placeholder           {
+    text-align: center;
+    color: #000;
+}/* Firefox 18- */
+:-ms-input-placeholder      {
+    text-align: center;
+    color: #000;
+}
+input {
+    text-align: center;
+}
+
+.textCategories {
+    color: #fff;
+    z-index: 59;
+    left: 92px;
+    top: 66px;
+    position: absolute;
+}
 
 
 #pagePreloader {
@@ -158,4 +185,29 @@ html {
     left: 0;
     right: 0;
     text-align: center;
+}
+
+.edit {
+        width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #1ABC9C;
+    position: absolute;
+    right: 10%;
+    top: 2%;
+    cursor: pointer;
+}
+
+.uk-icon-gear {
+    font-size: 35px;
+    color: #fff;
+    position: absolute;
+    top: 15%;
+    left: 20%;
+}
+
+.uk-icon-gear:hover {
+    display: inline-block;
+    -webkit-animation: uk-rotate 2s infinite linear;
+    animation: uk-rotate 2s infinite linear;
 }
