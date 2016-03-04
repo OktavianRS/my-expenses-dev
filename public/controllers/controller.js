@@ -17,9 +17,14 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http) {
     }
     refresh();
     
-   $scope.addCat = function(name) {
-       $http.post('http://localhost:3000/new_category/' + name).success(function(response) {
-            UIkit.notify('Doned');
+    $scope.addCat = function(name) {
+        $http.post('http://localhost:3000/new_category/' + name).success(function(response) {
+            if(response.error) {
+                UIkit.notify(response.error); 
+            }else {
+                UIkit.notify(response.status);
+                document.getElementById('butt').value = '';
+            }
        });
    }
     

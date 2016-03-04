@@ -41,13 +41,11 @@ function getCookie(name) {
             $spinner   = $('#spinner'),
             $welcome = $('#welcomeText'),
             $preloadDescription = $('#preloadDescription');
-        setTimeout(function() {
             $welcome.fadeOut();
             $spinner.fadeOut();
             $preloadDescription.fadeOut();
             $preloader.delay(350).fadeOut('slow');
-        }, 5000);
-    setTimeout( 'location="/login";', 6000 );
+            setTimeout( 'location="/login";', 500);
     });
 
 setCookie(cooName, true, {});

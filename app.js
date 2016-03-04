@@ -103,8 +103,16 @@ app.get('/get_item_category', function(req, res, next) {
 
 app.post('/new_category/:name', function(req, res, next) {
     Category.createCategory(req.user.username._id, req.params.name, function(err, result) {
-        if(err) {next(err)}
-        else {res.json(result);}
+        if(err) {
+            if(err.code === 11000) {
+                res.json({error: 'Category already exist.'});
+            }else{
+                next(err);
+            }
+        }
+        else {
+            res.json({status: 'Done'});
+        }
     });
 });
 
