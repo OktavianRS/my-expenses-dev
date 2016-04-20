@@ -14,8 +14,18 @@
     text-align: center;
     color: #000;
 }
+
+.menu__breadcrumbs + .menu__breadcrumbs {
+    display: none;
+    visibility: hidden;
+}
 input {
     text-align: center;
+}
+
+.hiddenInfo {
+    display: none;
+    visibility: hidden;
 }
 
 .textCategories {
@@ -210,4 +220,108 @@ html {
     display: inline-block;
     -webkit-animation: uk-rotate 2s infinite linear;
     animation: uk-rotate 2s infinite linear;
+}
+
+.logo {
+    background: url('../images/metaloader.gif');
+    height: 40px;
+    width: 40px;
+    border-radius: 18px;
+    background-position: center;
+    background-size: contain;
+}
+
+.uk-panel-box {
+    background: #333;
+    color: #fff;
+}
+
+.uk-panel-box .uk-panel-title,
+.uk-panel-box li a{
+    color: #fff;
+}
+
+.contant {
+    margin-left: 270px;
+    background: #F2F4F8;
+}
+
+.uk-sticky-placeholder {
+    box-shadow: 0 2px 2px rgba(0,0,0,0.05),0 1px 0 rgba(0,0,0,0.05);
+    z-index: 1;
+    position: relative;
+}
+
+#pjax-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 70px;
+    bottom: 0;
+    padding: 20px 10px;
+}
+
+.form-create_ex {
+    position: absolute;
+    width: 418px;
+    top: 50%;
+    margin-top: -112px;
+    right: 0;
+    left: 0;
+}
+
+.uk-datepicker {
+    border: 1px solid #000;
+}
+
+.dl-menu.dl-animate-out-1 {
+	animation: MenuAnimOut1 0.4s linear forwards;
+}
+
+@keyframes MenuAnimOut1 {
+	50% {
+		transform: translateZ(-250px) rotateY(30deg);
+	}
+	75% {
+		transform: translateZ(-372.5px) rotateY(15deg);
+		opacity: .5;
+	}
+	100% {
+		transform: translateZ(-500px) rotateY(0deg);
+		opacity: 0;
+	}
+}
+
+.dl-menu.dl-animate-in-1 {
+	animation: MenuAnimIn1 0.3s linear forwards;
+}
+
+@keyframes MenuAnimIn1 {
+	0% {
+		transform: translateZ(-500px) rotateY(0deg);
+		opacity: 0;
+	}
+	20% {
+		transform: translateZ(-250px) rotateY(30deg);
+		opacity: 0.5;
+	}
+	100% {
+		transform: translateZ(0px) rotateY(0deg);
+		opacity: 1;
+	}
+}
+
+.uk-button-neutral {
+    background-color: #2c3e50;
+    color: #fff;
+}
+
+.uk-button-neutral:hover {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.uk-button-neutral:focus {
+    background-color: #34495e;
+    color: #fff;
 }

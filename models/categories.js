@@ -5,7 +5,7 @@ var mongoose = require(__dirname + '/../libs/mongoose'),
 var categorySchema = new Schema({
     categorieName : {
         type: String,
-        unique: true
+        unique: false
     },
     user_id: {
         type: String

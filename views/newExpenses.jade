@@ -7,6 +7,20 @@ header.bp-header.cf
         #pagePreloader(style="position: absolute; background: none; -webkit-filter: blur(0px);")
                 span#spinner(style=" width: 100px; height: 100px; margin: -50px 0 0 -50px;")
         i.uk-icon-star(style="font-size:75px; cursor: pointer;")
+#my-id.uk-modal
+                    .uk-modal-dialog
+                        a.uk-modal-close.uk-close
+                        h2.uk-h2 Add new category
+                        form.uk-form
+                            input(placeholder="Category name", type="text", name="categoryName", ng-model="category.name")#CN
+                            button.uk-button(ng-click="addCat(category.name)") Add
+#my-id2.uk-modal
+                    .uk-modal-dialog
+                        a.uk-modal-close.uk-close
+                        h2.uk-h2 Add new sub category
+                        form.uk-form
+                            input(placeholder="Sub category name", type="text", name="subCategoryName", ng-model="subCategory.name")#SCN
+                            button.uk-button(ng-click="addSubCat(subCategory.name)") Add
 .container#myDiv
     button.action.action--open(aria-label="Open Menu")
         span.icon.icon--menu
@@ -17,29 +31,34 @@ header.bp-header.cf
             ul(data-menu="main", class="menu__level")
                 li.menu__item( ng-repeat="categorie in categories")
                     a(class="menu__link", href="#", data-submenu="submenu-{{categorie._id}}") {{categorie.categorieName}}
+                li.menu__item
+                    a.menu__link(href="#my-id", data-uk-modal="{center:true}") Add new category
             ul(data-menu="submenu-{{subCategorie.category_id}}", class="menu__level", ng-repeat="subCategorie in subCategories")
                 li.menu__item(ng-repeat="subCategorie in subCategories")
-                    a(class="menu__link", href="#", data-submenu="submenu-{{subCategorie._id}}") {{subCategorie.subCategorieName}}
-                    
+                    a(class="menu__link", href="#", ng-bind="list(subCategorie.category_id, subCategorie)")
+                li.menu__item
+                    a.menu__link(href="#my-id2", data-uk-modal="{center:true}") Add new Sub category
             ul(data-menu="submenu-{{itemCategorie.subCategorie_id}}", class="menu__level", ng-repeat="itemCategorie in itemCategories")
                 li.menu__item(ng-repeat="itemCategorie in itemCategories")
                     a(class="menu__link", href="#") {{itemCategorie.itemCategorieName}}        
     .content
-        form.uk-form(style="position: absolute;top: 100%;left: 0;right: 0;", action="/new_expense", method="post")
+        form.uk-form(style="position: absolute;top: 100%;left: 0;right: 0;")
             .uk-panel.uk-panel-box.uk-panel-box-primary.uk-width-1-2.uk-container-center.uk-text-center(style="margin-top: -91px;")
-                input(type="text", data-uk-datepicker="{format: 'dd.mm.yyyy}", name="date").uk-container-center#date.uk-width-1-1
-                p(style="padding: 0;", name="category").info Select category
+                input(type="text", data-uk-datepicker="{format: 'dd.mm.yyyy}", name="date", ng-model="date").uk-container-center#date.uk-width-1-1
+                p(style="padding: 0;").info Select category
                 input(placeholder="What ?" name="what").uk-width-1-1.uk-margin-bottom
+                input(name="category").hiddenInfo
                 label.uk-form-label Price
                 input(name="dollar",type="number", min="0", placeholder="$").uk-form-width-mini.uk-form-small.uk-margin-left
                 input(name="cent",type="number", max="100", min="0", placeholder="¢").uk-form-width-mini.uk-form-small.uk-margin-left
-                button(type="submit").uk-button.uk-button-primary.uk-width-1-1.uk-margin-top ok
-    
+                button(ng-click="newEx(date)").uk-button.uk-button-primary.uk-width-1-1.uk-margin-top ok
 script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.2/angular.min.js")
 script(src="/controllers/controller.js")
 script(src="/menu/js/modernizr-custom.js")
 script(src="/menu/js/classie.js")
 script(src="/menu/js/main.js")
 script(src="/menu/js/menu.js")
+script(src="/js/core/modal.min.js")
 script(src="/js/date.js")
 script(src="/js/components/datepicker.min.js")
+script(src="/js/components/notify.js")

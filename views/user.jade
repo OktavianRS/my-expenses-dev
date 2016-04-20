@@ -1,24 +1,14 @@
 .uk-grid
     a(href="/new-expenses").uk-width-1-2.leftButton
         .newExpenses New expenses
-    a(href="/view-expenses").uk-width-1-2.rightButton
+    a(href="/expenses").uk-width-1-2.rightButton
         .viewExpenses View expenses
 link(rel='stylesheet', href='/css/components/tooltip.almost-flat.min.css')
 a(href="/auth/logout",data-uk-tooltip="{pos:'bottom'}", title="logout", class="close")
     span.xOne
     span.xTwo
-a(data-uk-tooltip="{pos:'left'}", class="edit", href="#my-id", data-uk-modal="{center:true}")
-    i.uk-icon-gear
-#my-id.uk-modal
-    .uk-modal-dialog
-        a.uk-modal-close.uk-close
-        h2.uk-h2 Settings
-        form.uk-form
-            input(placeholder="Category name", type="text", name="categoryName", ng-model="category.name")#butt
-            button.uk-button(ng-click="addCat(category.name)") Add
 script(src="/js/components/notify.js")
 script(src="/js/components/tooltip.js")
-script(src="/js/core/modal.min.js")
 script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.2/angular.min.js")
 script(src="/controllers/controller.js")
 script UIkit.notify('Hello #{username}');// have an error
