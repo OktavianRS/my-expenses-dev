@@ -1,0 +1,32 @@
+<h3>Create new expense</h3>
+<link rel="stylesheet" href="/css/components/datepicker.min.css">
+<link rel="stylesheet" href="/css/menu/component.css">
+<form class="uk-form ng-pristine ng-valid form-create_ex uk-align-center" id="expense" action="/new_expense">
+    <div class="uk-panel uk-panel-box uk-panel-box-primary uk-container-center uk-text-center">
+        <input type="text" data-uk-datepicker="{format: 'dd.mm.yyyy, pos: top}" name="date" id="date" class="uk-container-center uk-width-1-1 ">
+        
+<div id="dl-menu" class="dl-menuwrapper" ng-bind-html-unsafe="menuView">
+        <span class="uk-button uk-button-primary uk-margin uk-width-1-1 info dl-trigger" id="categorie">Select category</span>
+    <ul id="menu-content" class="dl-menu">
+        
+    </ul>
+    <input type="text" class="hiddenInfo" id="hiddenCategorie" value="Without categorie">
+</div><!-- /dl-menuwrapper -->
+
+        <input placeholder="What ?" name="what" class="uk-width-1-1 uk-margin-bottom">
+        <label class="uk-form-label">Price</label>
+        <input id="dollar" name="dollar" type="number" placeholder="$" class="uk-form-width-mini uk-form-small uk-margin-left">
+        <input id="cent" name="cent" type="number" placeholder="¢" class="uk-form-width-mini uk-form-small uk-margin-left">
+        <button type="submit" ng-click="newEx(date)" class="uk-button uk-button-primary uk-width-1-1 uk-margin-top">ok <i id="refresh"></i> </button>
+    </div>
+</form>
+
+<script src="/js/menu/modernizr.custom.js"></script>
+<script src="/js/menu/jquery.dlmenu.js"></script>
+<script src="/js/components/datepicker.min.js"></script>
+<script src="/js/date.js"></script>
+<script src="/js/submit/submit_expense.js"></script>
+<script> setTimeout(function() {
+jQuery( '#dl-menu' ).dlmenu();
+}, 1500);
+</script>

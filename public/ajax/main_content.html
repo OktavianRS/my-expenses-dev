@@ -1,0 +1,23 @@
+<h3>Dashboard</h3>
+<table class="uk-table">
+    <caption>All categories</caption>
+    <thead>
+        <tr>
+            <th class="uk-width-1-2">Categories name</th>
+            <th class="uk-width-1-4">Delete category</th>
+            <th class="uk-width-1-4">Change name</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td><button class="uk-button uk-button-primary">Add new category +</button></td>
+        </tr>
+    </tfoot>
+    <tbody>
+        <tr ng-repeat="categorie in categories">
+            <td><button class="uk-button  uk-button-success uk-width-1-1">{{categorie.categorieName}}</button></td>
+            <td><button class="uk-button uk-button-danger uk-width-1-1"><i class="uk-icon-trash"></i></button></td>
+            <td><button class="uk-button uk-width-1-1 uk-button-neutral"><i class="uk-icon-pencil"></i></button></td>
+        </tr>
+    </tbody>
+</table>
