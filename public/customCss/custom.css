@@ -325,3 +325,10 @@ html {
     background-color: #34495e;
     color: #fff;
 }
+
+.activeBreadcrumb:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #000;
+    transition: all .3s;
+}

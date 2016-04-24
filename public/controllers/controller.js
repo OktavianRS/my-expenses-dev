@@ -1,10 +1,11 @@
 var myApp = angular.module('myApp', []);
 myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
-    
+    var counter = 0;
     var refresh = function() {
         $http.get('http://localhost:3000/get_category').success(function(response) {
             $scope.categories = response;
             $scope.categorie = "";
+            $scope.cats = $scope.categories;
             $http.get('http://localhost:3000/get_sub_category').success(function(response) {
                 $scope.subCategories = response;
                 $scope.subCategorie = "";
@@ -151,4 +152,66 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
         loadTemplate('../ajax/mannage_categories.html');
     }
 
+    $scope.breadcrumbsCtrl = function() {
+        counter = 0;
+        $scope.id = 999;
+        $scope.cats = $scope.categories;
+        $scope.levelOne = {};
+        $scope.levelTwo = {};
+    }
+    
+    $scope.breadcrumbsCtrlLvl2 = function(id, name) {
+        counter = 1;
+        $scope.levelTwo = {};
+        $scope.cats = $scope.subCategories;
+        $scope.id = id;
+    }
+    
+    $scope.showSubCategory = function(id, name, subName) {
+        if(counter < 3) {
+            counter++;
+        }
+        console.log(id);
+        switch(counter) {
+            case 0: 
+                $scope.cats = $scope.categories;
+                $scope.id = id;
+                break;
+            case 1:
+                $scope.levelOne = {
+                        name: name,
+                        id: id,
+                        icon: 'uk-icon-caret-right',
+                        active: 'activeBreadcrumb'
+                };
+                $scope.cats = $scope.subCategories;
+                $scope.id = id;
+                break;
+            case 2:
+                 $scope.levelTwo = {
+                        name: subName,
+                        id: id,
+                        icon: 'uk-icon-caret-right',
+                        active: 'activeBreadcrumb'
+                };
+                $scope.cats = $scope.itemCategories;
+                $scope.id = id;
+                break;
+            case 3:
+                counter--;
+            default: 
+                break;
+        }
+    }
+    
+    $scope.deleteCategory = function(obj) {
+        if(obj.categorieName) {
+            console.log('category');
+        }if(obj.subCategorieName) {
+            console.log('subCategory');
+        }if(obj.itemCategorieName){
+            console.log('itemCategorie');
+        }
+    }
+    
 }]);

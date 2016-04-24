@@ -1,23 +1,23 @@
 <h3>Dashboard</h3>
 <table class="uk-table">
-    <caption>All categories</caption>
-    <thead>
+    <caption id="breadcrumbs"><span class="{{levelOne.active}}" ng-click="breadcrumbsCtrl()">All categories</span> <i class="{{levelOne.icon}}"></i> <span class="{{levelTwo.active}}" ng-click="breadcrumbsCtrlLvl2(levelOne.id, levelOne.name)">{{levelOne.name}}</span> <i class="{{levelTwo.icon}}"></i> <span>{{levelTwo.name}}</span></caption>
+       <thead class="slideLeft">
         <tr>
-            <th class="uk-width-1-2">Categories name</th>
+            <th class="uk-width-1-2">Category name</th>
             <th class="uk-width-1-4">Delete category</th>
             <th class="uk-width-1-4">Change name</th>
         </tr>
     </thead>
-    <tfoot>
+    <tfoot class="slideLeft">
         <tr>
             <td><button class="uk-button uk-button-primary">Add new category +</button></td>
         </tr>
     </tfoot>
     <tbody>
-        <tr ng-repeat="categorie in categories">
-            <td><button class="uk-button  uk-button-success uk-width-1-1">{{categorie.categorieName}}</button></td>
-            <td><button class="uk-button uk-button-danger uk-width-1-1"><i class="uk-icon-trash"></i></button></td>
+        <tr ng-repeat="categorie in cats" ng-if="id === categorie.category_id || id === categorie.subCategorie_id || id === 999">
+            <td><button class="uk-button  uk-button-success uk-width-1-1" ng-click="showSubCategory(categorie._id, categorie.categorieName, categorie.subCategorieName)">{{categorie.categorieName}}{{categorie.subCategorieName}}{{categorie.itemCategorieName}}</button></td>
+            <td><button class="uk-button uk-button-danger uk-width-1-1" ng-click="deleteCategory(categorie)"><i class="uk-icon-trash"></i></button></td>
             <td><button class="uk-button uk-width-1-1 uk-button-neutral"><i class="uk-icon-pencil"></i></button></td>
         </tr>
-    </tbody>
+    </tbody> 
 </table>
