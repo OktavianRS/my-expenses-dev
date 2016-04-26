@@ -1,15 +1,16 @@
+var path = 'http://localhost:3000/';
 var myApp = angular.module('myApp', []);
 myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
     var counter = 0;
     var refresh = function() {
-        $http.get('http://localhost:3000/get_category').success(function(response) {
+        $http.get(path + 'get_category').success(function(response) {
             $scope.categories = response;
             $scope.categorie = "";
             $scope.cats = $scope.categories;
-            $http.get('http://localhost:3000/get_sub_category').success(function(response) {
+            $http.get(path + 'get_sub_category').success(function(response) {
                 $scope.subCategories = response;
                 $scope.subCategorie = "";
-                    $http.get('http://localhost:3000/get_item_category').success(function(response) {
+                    $http.get(path + 'get_item_category').success(function(response) {
                         $scope.itemCategories = response;
                         $scope.itemCategorie = "";
                         //===============================
@@ -22,20 +23,22 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
     }
     refresh();
     
-    var refreshSimple = function() {
-        $http.get('http://localhost:3000/get_category').success(function(response) {
+    $scope.refrefshSimple = function() {
+        $http.get(path + 'get_category').success(function(response) {
             $scope.categories = response;
             $scope.categorie = "";
-            $http.get('http://localhost:3000/get_sub_category').success(function(response) {
+            $http.get(path + 'get_sub_category').success(function(response) {
                 $scope.subCategories = response;
                 $scope.subCategorie = "";
-                    $http.get('http://localhost:3000/get_item_category').success(function(response) {
+                    $http.get(path + 'get_item_category').success(function(response) {
                         $scope.itemCategories = response;
                         $scope.itemCategorie = "";
                     });
             });
         });
     }
+    
+    $scope.refrefshSimple();
     
     var buildCategories = function(arr1, arr2, arr3) {
         var res = '';
@@ -81,48 +84,17 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
             res += '</ul>';
         }
         return res;
-    }
-    
-    $scope.addCat = function(name) {
-        $http.post('http://localhost:3000/new_category/' + name).success(function(response) {
-            if(response.error) {
-                UIkit.notify(response.error); 
-            }else {
-                UIkit.notify(response.status);
-                document.getElementById('CN').value = '';
-                    $http.get('http://localhost:3000/get_category').success(function(response) {
-                        $scope.categories = response;
-                        $scope.categorie = "";
-                    });
-            }
-       });
-   }
-    
-    $scope.addSubCat = function(name, id) {
-        var category_id = document.querySelector('.menu__level--current').id;
-        $http.post('http://localhost:3000/new_sub_category/' + name + '/' + category_id).success(function(response) {
-            if(response.error) {
-                UIkit.notify(response.error); 
-            }else {
-                UIkit.notify(response.status);
-                document.getElementById('SCN').value = '';
-                    $http.get('http://localhost:3000/get_sub_category').success(function(response) {
-                        $scope.subCategories = response;
-                        $scope.subCategorie = "";
-                    });
-            }
-       });
-   }    
+    }  
     
     var viewCat = function() {
-        $http.get('http://localhost:3000/view-expenses').success(function(response) {
+        $http.get(path + 'view-expenses').success(function(response) {
             $scope.expenses = response;
         });
     }
     viewCat();
     
     $scope.newEx = function(date) {//if clicked twice, it's send's twice same info. pls fix
-        $http.post('http://localhost:3000/new_expense').success(function(response) {
+        $http.post(path + 'new_expense').success(function(response) {
         });
     }
     
@@ -156,13 +128,13 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
         counter = 0;
         $scope.id = 999;
         $scope.cats = $scope.categories;
-        $scope.levelOne = {};
-        $scope.levelTwo = {};
+        $scope.levelOne = undefined;
+        $scope.levelTwo = undefined;
     }
     
     $scope.breadcrumbsCtrlLvl2 = function(id, name) {
         counter = 1;
-        $scope.levelTwo = {};
+        $scope.levelTwo = undefined;
         $scope.cats = $scope.subCategories;
         $scope.id = id;
     }
@@ -205,13 +177,60 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
     }
     
     $scope.deleteCategory = function(obj) {
+        $('.' + obj._id).remove();
         if(obj.categorieName) {
-            console.log('category');
+            $http.delete(path + 'category/' + obj._id).success(function(response) {
+                UIkit.notify(response.status);
+            });
         }if(obj.subCategorieName) {
             console.log('subCategory');
         }if(obj.itemCategorieName){
             console.log('itemCategorie');
         }
+    }
+    
+    $scope.addCategory = function(sub, item) {
+        console.log(item);
+        console.log(sub);
+        UIkit.modal.prompt('Name:', '', function(val){ 
+            if(!sub && !item) {
+                $http.post(path + 'new_category/' + val).success(function(response){
+                    if(response.error){
+                        UIkit.notify(response.error);
+                    }else{
+                        $http.get(path + 'get_category').success(function(response) {
+                            $scope.cats = response;
+                            $scope.refrefshSimple();
+                        });
+                        UIkit.notify('Category created succesfully! ');
+                    }
+                });
+            }if(sub && !item){
+                $http.post(path + 'new_sub_category/' + val +'/' + sub.id).success(function(response){
+                    if(response.error){
+                        UIkit.notify(response.error);
+                    }else{
+                        $http.get(path + 'get_sub_category').success(function(response) {
+                            $scope.cats = response;
+                            $scope.refrefshSimple();
+                        });
+                        UIkit.notify('Category created succesfully! ');
+                    }
+                });
+            }if(item && sub){
+                $http.post(path + 'new_item_category/' + val +'/' + item.id).success(function(response){
+                    if(response.error){
+                        UIkit.notify(response.error);
+                    }else{
+                        $http.get(path + 'get_item_category').success(function(response) {
+                            $scope.cats = response;
+                            $scope.refrefshSimple();
+                        });
+                        UIkit.notify('Category created succesfully! ');
+                    }
+                });
+            }
+        });
     }
     
 }]);

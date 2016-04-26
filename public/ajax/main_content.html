@@ -10,11 +10,11 @@
     </thead>
     <tfoot class="slideLeft">
         <tr>
-            <td><button class="uk-button uk-button-primary">Add new category +</button></td>
+            <td><button class="uk-button uk-button-primary" ng-click="addCategory(levelOne, levelTwo)">Add new</button></td>
         </tr>
     </tfoot>
     <tbody>
-        <tr ng-repeat="categorie in cats" ng-if="id === categorie.category_id || id === categorie.subCategorie_id || id === 999">
+        <tr ng-repeat="categorie in cats" ng-if="id === categorie.category_id || id === categorie.subCategorie_id || id === 999" class="{{categorie._id}}">
             <td><button class="uk-button  uk-button-success uk-width-1-1" ng-click="showSubCategory(categorie._id, categorie.categorieName, categorie.subCategorieName)">{{categorie.categorieName}}{{categorie.subCategorieName}}{{categorie.itemCategorieName}}</button></td>
             <td><button class="uk-button uk-button-danger uk-width-1-1" ng-click="deleteCategory(categorie)"><i class="uk-icon-trash"></i></button></td>
             <td><button class="uk-button uk-width-1-1 uk-button-neutral"><i class="uk-icon-pencil"></i></button></td>

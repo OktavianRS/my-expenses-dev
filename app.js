@@ -134,30 +134,12 @@ passport.use(new LocalStrategy(
                                 if (err) { return next(err); }
                                 console.log(user);
                                 Category.createCategory(user._id, 'Shoping', function(log, result) {
-                                    subCategory.createSubCategory(user._id, result._id, 'Food', function(err, result) {
-                                        itemCategory.createItemCategory(user._id, result._id, 'Sweets', function(err,result) {});
-                                        itemCategory.createItemCategory(user._id, result._id, 'Drinks', function(err,result) {});
-                                    });
-                                    subCategory.createSubCategory(user._id, result._id, 'Clothes', function(err, result) {
-                                        itemCategory.createItemCategory(user._id, result._id, 'Summer season', function(err,result) {});
-                                        itemCategory.createItemCategory(user._id, result._id, 'Winter season', function(err,result) {});
+                                    Category.createCategory(user._id, 'Traveling', function(log, result) {
+                                        Category.createCategory(user._id, 'Sport', function(log, result) {
+                                            return res.redirect('/user');
+                                        });
                                     });
                                 });
-                                Category.createCategory(user._id, 'Sport', function(log, result) {
-                                    subCategory.createSubCategory(user._id, result._id, 'Equipment', function(err, result) {
-                                        itemCategory.createItemCategory(user._id, result._id, 'Football', function(err,result) {});
-                                        itemCategory.createItemCategory(user._id, result._id, 'Hokey', function(err,result) {});
-                                    });
-                                    subCategory.createSubCategory(user._id, result._id, 'Else', function(err, result) {
-                                        
-                                    });
-                                });
-                                Category.createCategory(user._id, 'Traveling', function(log, result) {
-                                    subCategory.createSubCategory(user._id, result._id, 'Tikets', function(err, result) {
-                                        
-                                    });
-                                });
-                                return res.redirect('/user');
                             });
                         }
                     });//end of create
@@ -239,7 +221,7 @@ app.post('/new_category/:name', function(req, res, next) {
                 }
             }
             else {
-                res.json({status: 'Done'});
+                res.json({status: 'Category created'});
             }
         });
     }else{
@@ -283,6 +265,21 @@ app.post('/new_item_category/:name/:sub_category_id', function(req, res, next) {
     }else{
         res.redirect('/');
     }
+});
+
+app.delete('/category/:id', function(req, res) {
+   Category.findOneAndRemove({
+       _id: req.params.id
+   }, function(err, catetgory) {
+       if(err) {
+           res.json({status: 'Ops... Error'});
+       } else {
+           subCategory.findOneAndRemove({
+               category_id: req.params.id
+           });
+           res.json({status: 'Deleted'});
+       }
+   }) 
 });
 
 app.get('/user', function(req, res, next) {
