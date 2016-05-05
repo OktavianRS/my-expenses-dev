@@ -221,7 +221,9 @@ app.post('/new_category/:name', function(req, res, next) {
                 }
             }
             else {
-                res.json({status: 'Category created'});
+                Category.find({user_id : req.user.username._id}, function(err, result) {
+                    res.json(result);
+                }) ;
             }
         });
     }else{
@@ -240,7 +242,9 @@ app.post('/new_sub_category/:name/:category_id', function(req, res, next) {
                 }
             }
             else {
-                res.json({status: 'Done'});
+                subCategory.find({user_id : req.user.username._id}, function(err, result) {
+                    res.json(result);
+                }) ;
             }
         });
     }else{
@@ -259,7 +263,9 @@ app.post('/new_item_category/:name/:sub_category_id', function(req, res, next) {
                 }
             }
             else {
-                res.json({status: 'Done'});
+                itemCategory.find({user_id : req.user.username._id}, function(err, result) {
+                    res.json(result);
+                });
             }
         });
     }else{
@@ -274,12 +280,75 @@ app.delete('/category/:id', function(req, res) {
        if(err) {
            res.json({status: 'Ops... Error'});
        } else {
-           subCategory.findOneAndRemove({
-               category_id: req.params.id
-           });
-           res.json({status: 'Deleted'});
+           Category.find({user_id : req.user.username._id}, function(err, result) {
+                    res.json(result);
+                }) ;
        }
    }) 
+});
+
+app.delete('/sub_category/:id', function(req, res) {
+   subCategory.findOneAndRemove({
+       _id: req.params.id
+   }, function(err, subCat) {
+       if(err) {
+           res.json({status: 'Ops... Error'});
+       }else {
+           subCategory.find({user_id : req.user.username._id}, function(err, result) {
+                    res.json(result);
+            });
+       }
+   }) 
+});
+
+app.delete('/item_category/:id', function(req, res) {
+   itemCategory.findOneAndRemove({
+       _id: req.params.id
+   }, function(err, itemCat) {
+       if(err) {
+           res.json({status: 'Ops... Error'});
+       } else {
+           itemCategory.find({user_id : req.user.username._id}, function(err, result) {
+                    res.json(result);
+                });
+       }
+   }) 
+});
+
+app.post('/rename_category/:id/:name', function(req, res) {
+   Category.update({_id: req.params.id},{categorieName: req.params.name}, function(err, done) {
+      if(err){
+          res.json({error: 'Error'})
+      }else {
+          Category.find({user_id : req.user.username._id}, function(err, result) {
+              res.json(result);
+          });
+      }
+   }); 
+});
+
+app.post('/rename_sub_category/:id/:name', function(req, res) {
+   subCategory.update({_id: req.params.id},{subCategorieName: req.params.name}, function(err, done) {
+      if(err){
+          res.json({error: 'Error'})
+      }else {
+          subCategory.find({user_id : req.user.username._id}, function(err, result) {
+              res.json(result);
+          });
+      }
+   }); 
+});
+
+app.post('/rename_item_category/:id/:name', function(req, res) {
+   itemCategory.update({_id: req.params.id},{itemCategorieName: req.params.name}, function(err, done) {
+      if(err){
+          res.json({error: 'Error'})
+      }else {
+          itemCategory.find({user_id : req.user.username._id}, function(err, result) {
+              res.json(result);
+          });
+      }
+   }); 
 });
 
 app.get('/user', function(req, res, next) {
@@ -292,16 +361,6 @@ app.get('/user', function(req, res, next) {
     }
 });
 
-//app.get('/home', function(req, res, next) {
-//    if(req.user) {
-//        res.render('home', {
-//            username: req.user.username.username
-//        });
-//    }else {
-//        res.redirect('/');
-//    }
-//});
-
 app.post('/new_expense', function(req, res, next) {
     if(req.user){
         Expense.createExpense(req.user.username._id, req.body.date, req.body.categorie, req.body.what, req.body.dollar,  req.body.cent, function(err, result) {
@@ -309,13 +368,14 @@ app.post('/new_expense', function(req, res, next) {
                     res.json({ status: 'Something went wrong...' });
                 }
                 else {
-                    res.json({ status: 'Succesfully created!' });
+                    Expense.find({user : req.user.username._id}, function(err, result) {
+                        res.json(result);
+                    });
                 }
             });
     }else{
         res.redirect('/');
     }
-    console.log(req.body);
 });
 
 app.use(function(err, req, res, next) {
@@ -343,6 +403,22 @@ app.get('/view-expenses', function(req, res, next) {
     }else {
         res.redirect('/');
     }
+});
+
+app.delete('/delete-expense/:id', function(req, res, next) {
+   if(req.user) {
+       Expense.findOneAndRemove({
+           _id: req.params.id
+       }, function(err, done) {
+          if(err){res.json({status: 'Server error'})}else{
+              Expense.find({user : req.user.username._id}, function(err, result) {
+                  res.json(result);
+              });
+          } 
+       });
+   }else {
+       res.redirect('/');
+   } 
 });
 
 app.listen(3000, function(){

@@ -19,7 +19,7 @@ $( "#expense" ).submit(function( event ) {
         
         // Put the results in a div
         posting.done(function( data ) {
-            UIkit.notify(data.status);
+            UIkit.notify('All fine', {status: 'success', timeout: 450});
             $('#refresh').toggleClass('uk-icon-refresh uk-icon-spin');
             document.getElementById('hiddenCategorie').value = '';
             document.getElementById('dollar').value = '';

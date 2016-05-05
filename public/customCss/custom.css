@@ -259,6 +259,7 @@ html {
     top: 70px;
     bottom: 0;
     padding: 20px 10px;
+    overflow-y: auto;
 }
 
 .form-create_ex {
@@ -331,4 +332,28 @@ html {
     text-decoration: underline;
     color: #000;
     transition: all .3s;
+}
+
+
+
+::-webkit-scrollbar-track
+{
+	background-color: rgba(50,50,50,0.25);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar
+{
+	width: 8px;
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+	background-color: rgba(50,50,50,0.25);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background-clip: padding-box;
 }

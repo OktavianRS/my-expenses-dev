@@ -30,7 +30,7 @@
 		// callback: click a link that does not have a sub menu
 		// el is the link element (li); ev is the event obj
         onLinkClick : function( el, ev ) {
-            UIkit.notify( 'Selected categorie: ' + el[0].innerText);
+            UIkit.notify( 'Selected category: ' + el[0].innerText);
             document.getElementById('hiddenCategorie').value = el[0].innerText;
             return false;
         }

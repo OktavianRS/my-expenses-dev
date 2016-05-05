@@ -1,6 +1,6 @@
 var path = 'http://localhost:3000/';
 var myApp = angular.module('myApp', []);
-myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
+myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
     var counter = 0;
     var refresh = function() {
         $http.get(path + 'get_category').success(function(response) {
@@ -23,7 +23,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
     }
     refresh();
     
-    $scope.refrefshSimple = function() {
+    $scope.refreshSimple = function() {
         $http.get(path + 'get_category').success(function(response) {
             $scope.categories = response;
             $scope.categorie = "";
@@ -38,7 +38,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
         });
     }
     
-    $scope.refrefshSimple();
+    $scope.refreshSimple();
     
     var buildCategories = function(arr1, arr2, arr3) {
         var res = '';
@@ -86,19 +86,22 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
         return res;
     }  
     
-    var viewCat = function() {
+    var viewExp = function() {
         $http.get(path + 'view-expenses').success(function(response) {
             $scope.expenses = response;
         });
     }
-    viewCat();
+    viewExp();
+    // templates
     
-    $scope.newEx = function(date) {//if clicked twice, it's send's twice same info. pls fix
-        $http.post(path + 'new_expense').success(function(response) {
+    $scope.deleteExp = function(id) {
+        $http.delete(path + 'delete-expense/' + id).success(function(response) {
+            if(response.status) {
+                UIkit(response.status, {status: 'danger', timeout: 450});
+            }
+           $scope.expenses = response; 
         });
     }
-    
-    // templates
     
     var loadTemplate = function(path) {
         $scope.templateURL = path;
@@ -112,8 +115,8 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
         loadTemplate('../ajax/add_expense.html');
         setTimeout(function() {
             document.getElementById('menu-content').innerHTML = $scope.menuBuild;
-        }, 1000);
-        
+            jQuery( '#dl-menu' ).dlmenu();
+        },300);
     }
     
     $scope.Dashboard = function($scope) {
@@ -122,6 +125,11 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
     
     $scope.MannageCategories = function($scope) {
         loadTemplate('../ajax/mannage_categories.html');
+    }
+    
+    $scope.ListExpenses = function($scope) {
+        viewExp();
+        loadTemplate('../ajax/list_expenses.html');
     }
 
     $scope.breadcrumbsCtrl = function() {
@@ -143,7 +151,6 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
         if(counter < 3) {
             counter++;
         }
-        console.log(id);
         switch(counter) {
             case 0: 
                 $scope.cats = $scope.categories;
@@ -180,29 +187,35 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
         $('.' + obj._id).remove();
         if(obj.categorieName) {
             $http.delete(path + 'category/' + obj._id).success(function(response) {
-                UIkit.notify(response.status);
+                $scope.cats = response;
+                refresh();
+                UIkit.notify('Deleted', {status:'danger', timeout: 450});
             });
         }if(obj.subCategorieName) {
-            console.log('subCategory');
+            $http.delete(path + 'sub_category/' + obj._id).success(function(response) {
+                $scope.cats = response;
+                refresh();
+                UIkit.notify('Deleted', {status:'danger', timeout: 450});
+            });
         }if(obj.itemCategorieName){
-            console.log('itemCategorie');
+            $http.delete(path + 'item_category/' + obj._id).success(function(response) {
+                $scope.cats = response;
+                refresh();
+                UIkit.notify('Deleted', {status:'danger', timeout: 450});
+            });
         }
     }
     
     $scope.addCategory = function(sub, item) {
-        console.log(item);
-        console.log(sub);
         UIkit.modal.prompt('Name:', '', function(val){ 
             if(!sub && !item) {
                 $http.post(path + 'new_category/' + val).success(function(response){
                     if(response.error){
                         UIkit.notify(response.error);
                     }else{
-                        $http.get(path + 'get_category').success(function(response) {
                             $scope.cats = response;
-                            $scope.refrefshSimple();
-                        });
-                        UIkit.notify('Category created succesfully! ');
+                            refresh();
+                        UIkit.notify("Category created succesfully!", {status:'success', timeout : 450});
                     }
                 });
             }if(sub && !item){
@@ -210,11 +223,9 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
                     if(response.error){
                         UIkit.notify(response.error);
                     }else{
-                        $http.get(path + 'get_sub_category').success(function(response) {
                             $scope.cats = response;
-                            $scope.refrefshSimple();
-                        });
-                        UIkit.notify('Category created succesfully! ');
+                            refresh();
+                        UIkit.notify("Category created succesfully!", {status:'success', timeout : 450});
                     }
                 });
             }if(item && sub){
@@ -222,15 +233,54 @@ myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http, $sce) {
                     if(response.error){
                         UIkit.notify(response.error);
                     }else{
-                        $http.get(path + 'get_item_category').success(function(response) {
                             $scope.cats = response;
-                            $scope.refrefshSimple();
-                        });
-                        UIkit.notify('Category created succesfully! ');
+                            refresh();
+                        UIkit.notify("Category created succesfully!", {status:'success', timeout : 450});
                     }
                 });
             }
         });
     }
+    
+    $scope.rename = function(obj) {
+        UIkit.modal.prompt('New name:', '', function(val){
+            if(obj.categorieName) {
+                $http.post(path + 'rename_category/' + obj._id + '/' + val).success(function(response) {
+                    if(response.error){
+                        UIkit.notify(response.error);
+                    }else{
+                        $scope.cats = response;
+                        refresh();
+                        UIkit.notify("Ranamed", {status:'success', timeout : 450});
+                    }
+                });    
+            }if(obj.subCategorieName) {
+                $http.post(path + 'rename_sub_category/' + obj._id + '/' + val).success(function(response) {
+                    if(response.error){
+                        UIkit.notify(response.error);
+                    }else{
+                        $scope.cats = response;
+                        refresh();
+                        UIkit.notify("Ranamed", {status:'success', timeout : 450});
+                    }
+                });    
+            }if(obj.itemCategorieName){
+                $http.post(path + 'rename_item_category/' + obj._id + '/' + val).success(function(response) {
+                    if(response.error){
+                        UIkit.notify(response.error);
+                    }else{
+                        $scope.cats = response;
+                        refresh();
+                        UIkit.notify("Ranamed", {status:'success', timeout : 450});
+                    }
+                });    
+            }
+        });
+    }
+    
+  $scope.order = function(item, vector) {
+    $scope.reverse = vector;
+    $scope.predicate = item;
+  };
     
 }]);

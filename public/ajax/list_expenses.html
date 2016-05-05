@@ -1,0 +1,68 @@
+<h3>List Expenses</h3><input type="search" placeholder="Search" id="jetsSearch">
+<table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">
+<style>
+    .uk-table td, .uk-table th {padding: 1px 1px;}
+</style>
+    <thead>
+        <tr>
+            <th>
+                <div class="uk-button-dropdown uk-width-1-1" data-uk-dropdown>
+                    <button class="uk-button uk-width-1-1 uk-button-primary">Date <i class="uk-icon-caret-down"></i></button>
+                        <div class="uk-dropdown uk-dropdown-small">
+                            <ul class="uk-nav uk-nav-dropdown">
+                                <li><a ng-click="order('date', false)">Older to top</a></li>
+                                <li><a ng-click="order('date', true)">Newer to top</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </th>
+            <th>
+                <div class="uk-button-dropdown uk-width-1-1" data-uk-dropdown>
+                    <button class="uk-button uk-width-1-1 uk-button-primary">Category <i class="uk-icon-caret-down"></i></button>
+                        <div class="uk-dropdown uk-dropdown-small">
+                            <ul class="uk-nav uk-nav-dropdown">
+                                <li ng-repeat="categorie in categories"><a>{{categorie.categorieName}}</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </th>
+            <th>
+                <div class="uk-button-dropdown uk-width-1-1" data-uk-dropdown>
+                    <button class="uk-button uk-width-1-1 uk-button-primary">What <i class="uk-icon-caret-down"></i></button>
+                        <div class="uk-dropdown uk-dropdown-small">
+                            <ul class="uk-nav uk-nav-dropdown">
+                                <li><a ng-click="order('what', false)">A <i class="uk-icon-angle-double-right"></i> Z</a></li>
+                                <li><a ng-click="order('what', true)">Z <i class="uk-icon-angle-double-right"></i> A</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </th>
+            <th>
+                <div class="uk-button-dropdown uk-width-1-1" data-uk-dropdown>
+                    <button class="uk-button uk-width-1-1 uk-button-primary">Price <i class="uk-icon-caret-down"></i></button>
+                        <div class="uk-dropdown uk-dropdown-small">
+                            <ul class="uk-nav uk-nav-dropdown">
+                                <li><a ng-click="order('priceDollars', true)">From more to less</a></li>
+                                <li><a ng-click="order('priceDollars', false)">from less to more</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </th>
+            <th class="uk-text-center"><button class="uk-button uk-width-1-1 uk-button-primary">Delete</button></th>
+        </tr>
+    </thead>
+    <tbody id="jetsContent">
+        <tr ng-repeat="expense in expenses | orderBy:predicate:reverse track by expense._id">
+            <td>{{expense.date}}</td>
+            <td>{{expense.category}}</td>
+            <td>{{expense.what}}</td>
+            <td>{{expense.priceDollars}}.{{expense.priceCents}}$</td>
+            <td class="uk-text-center"><button class="uk-button uk-button-danger uk-width-1-2" ng-click="deleteExp(expense._id)"><i class="uk-icon-close"></i></button></td>
+        </tr>
+    </tbody>
+</table>
+<script src="/js/jets.min.js"></script>
+<script>var jets = new Jets({
+  searchTag: '#jetsSearch',
+  contentTag: '#jetsContent'
+});</script>
