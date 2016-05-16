@@ -5,12 +5,15 @@ var express = require('express')
       ,routes = require('./routes')
       ,app = module.exports = express.createServer() 
       ,passport = require('passport') 
-      ,LocalStrategy = require('passport-local').Strategy 
-      ,User = require(__dirname + '/models/user').User 
+      ,LocalStrategy = require('passport-local').Strategy
+      ,GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
+      ,User = require(__dirname + '/models/user').User
+      ,googleUser = require(__dirname + '/models/user').googleUser
       ,Category = require(__dirname + '/models/categories').Category
       ,subCategory = require(__dirname + '/models/subCategories').subCategory
       ,itemCategory = require(__dirname + '/models/itemCategories').itemCategory
-      ,Expense = require(__dirname + '/models/expense').Expense;
+      ,Expense = require(__dirname + '/models/expense').Expense
+      ,config =require(__dirname + '/configs/config');
 
 // Configuration
 app.configure(function(){
@@ -50,6 +53,18 @@ passport.use(new LocalStrategy(
         User.authorize(username, password, function(err, user) {
             if(err) {return done(null, false)}
             else{return done(null, user)}
+        });
+    }
+));
+
+passport.use(new GoogleStrategy({
+    clientID: config.googleAuth.clientID,
+    clientSecret: config.googleAuth.clientSecret,
+    callbackURL: config.googleAuth.callbackURL
+}, function(accessToken, refreshToken, profile, done) {
+        googleUser.authorizeGoogle(profile.id, accessToken, profile.emails[0].value, profile.displayName, function(err, user) {
+            if(err) {return done(null, false)}
+            else{ console.log(user); return done(null, user)}
         });
     }
 ));
@@ -102,6 +117,13 @@ passport.use(new LocalStrategy(
             res.redirect('/user');
         }
     });
+
+    app.get('/auth/google', passport.authenticate('google', {scope: ['email', 'profile']}));
+    
+    app.get('/auth/google/callback', 
+           passport.authenticate('google', { successRedirect: '/user',
+                                            failureRedirect: '/login'
+        }));
 
     app.post('/login', function(req, res, next) {
         if(!req.user){
@@ -252,9 +274,9 @@ app.post('/new_sub_category/:name/:category_id', function(req, res, next) {
     }
 });
             
-app.post('/new_item_category/:name/:sub_category_id', function(req, res, next) {
+app.post('/new_item_category/:name/:category_id/:sub_category_id', function(req, res, next) {
     if(req.user){
-        itemCategory.createItemCategory(req.user.username._id, req.params.sub_category_id, req.params.name, function(err, result) {
+        itemCategory.createItemCategory(req.user.username._id, req.params.category_id, req.params.sub_category_id, req.params.name, function(err, result) {
             if(err) {
                 if(err.code === 11000) {
                     res.json({error: 'Sub category already exist.'});
@@ -363,8 +385,9 @@ app.get('/user', function(req, res, next) {
 
 app.post('/new_expense', function(req, res, next) {
     if(req.user){
-        Expense.createExpense(req.user.username._id, req.body.date, req.body.categorie, req.body.what, req.body.dollar,  req.body.cent, function(err, result) {
+        Expense.createExpense(req.user.username._id, req.body, function(err, result) {
                 if(err) {
+                    console.log(err);
                     res.json({ status: 'Something went wrong...' });
                 }
                 else {
@@ -421,6 +444,6 @@ app.delete('/delete-expense/:id', function(req, res, next) {
    } 
 });
 
-app.listen(3000, function(){
+app.listen(config.url.port, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });

@@ -32,24 +32,27 @@ style html { background: #F2F4F8; }
                             a.menu__link(data-submenu="submenu-1") some text
                         
 
-.uk-offcanvas-bar.uk-offcanvas-bar-show(style="-webkit-transform: translateX(0); transform: translateX(0%); top: 70px; position: absolute;", data-ng-init="Dashboard()")
+.uk-offcanvas-bar.uk-offcanvas-bar-show(style="-webkit-transform: translateX(0); transform: translateX(0%); top: 70px; position: absolute;", data-ng-init="loadTemplate('dashboard')")
     .uk-nav.uk-nav-offcanvas.uk-nav-parent-icon.na-menu
         li.uk-nav-header.uk-margin-top.uk-margin Menu
         li.item.uk-active
-            a(ng-click="Dashboard()").active Dashboard
+            a(ng-click="loadTemplate('dashboard')").active Dashboard
         li.uk-nav-divider
         li.item
-            a(ng-click="AddExpense()") Add expense
+            a(ng-click="loadTemplate('add_expense')") Add expense
         li.item
-            a(ng-click="MannageCategories()") Mannage catetgories
+            a(ng-click="loadTemplate('mannage_categories')") Mannage catetgories
         li.item
-            a(ng-click="ListExpenses()") List expenses
+            a(ng-click="loadTemplate('list_expenses')") List expenses
+        li.item
+            a(ng-click="loadTemplate('charts')") Charts
 .contant#pjax-container(ng-include="templateURL", ng-view='onMenuLoad')
+script(src="/js/randomColor.js")
 script(src="/js/components/notify.js")
+script(src="/js/chart/chartjs/dist/Chart.min.js")
 script(src="/js/core/dropdown.js")
 script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.2/angular.min.js")
 script(src="/controllers/controller.js")
-script(src="/js/mainMenu.js")
 script(src="/js/menu/modernizr.custom.js")
 script(src="/js/menu/jquery.dlmenu.js")
-script UIkit.notify('Hello #{username}');// have an error
+script UIkit.notify('Hello #{username}');

@@ -357,3 +357,9 @@ html {
     border-radius: 10px;
     background-clip: padding-box;
 }
+
+.pie-body {
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+}

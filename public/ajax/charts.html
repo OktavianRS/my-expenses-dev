@@ -1,0 +1,22 @@
+<h3>Charts</h3>
+<div class="uk-grid">
+    <div class="uk-width-1-2 pie-body">
+        <canvas id="myChart" data-ng-init="datePeriod(7)"></canvas>
+        <!-- This is the container enabling the JavaScript -->
+<div class="uk-button-dropdown" data-uk-dropdown>
+
+    <!-- This is the button toggling the dropdown -->
+    <button class="uk-button uk-button-primary">button</button>
+
+    <!-- This is the dropdown -->
+    <div class="uk-dropdown uk-dropdown-small">
+        <ul class="uk-nav uk-nav-dropdown">
+            <li ng-click="datePeriod(7)"><a>Last  7 days</a></li>
+            <li ng-click="datePeriod(30)"><a>Last 30 days</a></li>
+            <li ng-click="datePeriod(365)"><a>Last year</a></li>
+        </ul>
+    </div>
+
+</div>
+    </div>
+</div>

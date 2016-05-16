@@ -24,6 +24,21 @@ var schema = new Schema({
   }
 });
 
+var googleSchema = new Schema({
+      id: {
+          type: String
+      },
+      token: {
+          type: String
+      },
+      email: {
+          type: String
+      },
+      username: {
+          type: String
+      }
+});
+
 schema.methods.encryptPassword = function(password) {
   return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
 };
@@ -90,4 +105,47 @@ schema.statics.create = function(username, password, callback) {
     };
 };
 
+googleSchema.statics.authorizeGoogle = function(id, token, email, name, callback) {
+        async.waterfall([
+            function(callback) {
+                googleUser.findOne({id : id}, callback);
+            },
+            function(user, callback) {
+                if(user) {
+                    callback(null, user);
+                } else {
+                        async.series([
+                            open,
+                            requireModels,
+                            createUsers
+                        ], function(err, results) {
+                            if(err) {
+                                callback(err);
+                            }else{
+                                callback(null, arguments[1][2][0].google);
+                            }
+                        });
+                        
+                        function open(callback) {
+                            mongoose.connection.on('open', callback);
+                            callback();
+                        }
+                    
+                        function requireModels(callback) {
+                            async.each(Object.keys(mongoose.models), function(modelName, callback) {
+                                mongoose.models[modelName].ensureIndexes(callback); 
+                            }, callback);
+                        }
+                        
+                        function createUsers(callback) {
+                            var users = {id: id, token: token, email: email, username: name};
+                            var user = new mongoose.models.googleUser(users);
+                            user.save(callback);
+                        };
+                }//end of else
+            }
+        ], callback);
+};
+
 var User = exports.User = mongoose.model('User', schema);
+var googleUser = exports.googleUser = mongoose.model('googleUser', googleSchema);

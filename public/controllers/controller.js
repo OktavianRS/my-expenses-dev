@@ -1,49 +1,107 @@
 var path = 'http://localhost:3000/';
 var myApp = angular.module('myApp', []);
-myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
+myApp.controller('AppCtrl', ['$scope', '$http', function($scope, $http) {
     var counter = 0;
-    var refresh = function() {
-        $http.get(path + 'get_category').success(function(response) {
-            $scope.categories = response;
-            $scope.categorie = "";
-            $scope.cats = $scope.categories;
-            $http.get(path + 'get_sub_category').success(function(response) {
-                $scope.subCategories = response;
-                $scope.subCategorie = "";
-                    $http.get(path + 'get_item_category').success(function(response) {
-                        $scope.itemCategories = response;
-                        $scope.itemCategorie = "";
-                        //===============================
-                        //    generate template
-                        //===============================
-                        $scope.menuBuild = buildCategories($scope.categories, $scope.subCategories, $scope.itemCategories);
-                    });
-            });
-        });
-    }
-    refresh();
+    //date sort function
     
-    $scope.refreshSimple = function() {
-        $http.get(path + 'get_category').success(function(response) {
-            $scope.categories = response;
-            $scope.categorie = "";
-            $http.get(path + 'get_sub_category').success(function(response) {
-                $scope.subCategories = response;
-                $scope.subCategorie = "";
-                    $http.get(path + 'get_item_category').success(function(response) {
-                        $scope.itemCategories = response;
-                        $scope.itemCategorie = "";
-                    });
-            });
-        });
+    $('.na-menu li.item').click(function() {
+    $('.na-menu li').removeClass('uk-active');
+        this.className = 'uk-active'; 
+    });
+    
+    Date.prototype.addDays = function(days) {
+        var dat = new Date(this.valueOf())
+        dat.setDate(dat.getDate() + days);
+        return dat;
     }
     
-    $scope.refreshSimple();
+    function dateView(today) {
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+        if(dd<10){
+            dd='0'+dd
+        } 
+        if(mm<10){
+            mm='0'+mm
+        } 
+        return yyyy+'-'+mm+'-'+dd;
+    }
     
+    $scope.setDate = function() {
+        document.getElementById("date").value = dateView(new Date());
+    }
+    
+    // sorting array of objects
+    function unique(arr) {
+        var result = [];
+        
+        nextInput:
+        for (var i = 0; i < arr.length; i++) {
+            var str = arr[i];
+            for (var j = 0; j < result.length; j++) { 
+                if (result[j].category_id == str.category_id) {
+                    result.splice(j, 1, {
+                        color: randomColor(),
+                        category_id: str.category_id,
+                        categoryName: result[j].categoryName,
+                        priceDollars: result[j].priceDollars + str.priceDollars,
+                        priceCents: result[j].priceCents + str.priceCents
+                    });
+                    continue nextInput; 
+                }
+            }
+            result.push({
+                        color : randomColor(),
+                        category_id: str.category_id,
+                        categoryName: str.categoryName,
+                        priceDollars: str.priceDollars,
+                        priceCents: str.priceCents
+                    });
+        }
+        $scope.period = result;
+        $scope.loadChart();
+    }
+    
+    $scope.datePeriod = function(per) {
+        var endDate = new Date();
+        var startDate = endDate.addDays(-per);
+        var array = [];
+        angular.forEach($scope.expenses, function(val) {
+            if(new Date(val.date) < endDate && new Date(val.date) > startDate) {
+                array.push(val);
+            }
+        });
+        unique(array);
+    }
+    
+    // refresh category scopes and build html template of categories
+        var refresh = function() {
+            $http.get(path + 'get_category').success(function(response) {
+                $scope.categories = response;
+                $http.get(path + 'get_sub_category').success(function(response) {
+                    $scope.subCategories = response;
+                        $http.get(path + 'get_item_category').success(function(response) {
+                            $scope.itemCategories = response;
+                            //===============================
+                            //    generate template
+                            //===============================
+                            $scope.menuBuild = buildCategories($scope.categories, $scope.subCategories, $scope.itemCategories);
+                        });
+                });
+            });
+        }
+        refresh();
+    
+    $scope.scopeCats = function() {
+        $scope.cats = $scope.categories;
+    }
+    
+    // fnc of html template buids
     var buildCategories = function(arr1, arr2, arr3) {
         var res = '';
         angular.forEach(arr1, function(value, key) {
-            res += '<li><a>' + value.categorieName + '</a>';
+            res += '<li data-category="true" data-category_id="'+ value._id +'"><a>' + value.categorieName + '</a>';
             res = buildSubCategories(value._id, arr2, arr3,  res);
             res += '</li>';
         });
@@ -58,7 +116,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, 
                     res += '<ul class="dl-submenu">';
                     rule = false;
                 }
-                res += '<li><a>' + value.subCategorieName + '</a>';
+                res += '<li data-subCategory="true" data-category_id="'+ value.category_id +'" data-subCategory_id="'+ value._id +'"><a>' + value.subCategorieName + '</a>';
                 res = buildItemCategories(value._id, arr3, res);
                 res += '</li>';
             }
@@ -77,7 +135,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, 
                     res += '<ul class="dl-submenu">';
                     rule = false;
                 }
-                res += '<li><a>' + value.itemCategorieName + '</a></li>';
+                res += '<li data-itemCategory="true" data-category_id="'+ value.category_id +'" data-subCategory_id="'+ value.subCategorie_id +'" data-itemCategory_id="'+ value._id +'"><a>' + value.itemCategorieName + '</a></li>';
             }
         });
         if(rule === false) {
@@ -85,16 +143,17 @@ myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, 
         }
         return res;
     }  
-    
-    var viewExp = function() {
+
+    var viewExp = function(callback) {
         $http.get(path + 'view-expenses').success(function(response) {
             $scope.expenses = response;
+            callback();
         });
     }
-    viewExp();
-    // templates
+    viewExp(function(){});
     
     $scope.deleteExp = function(id) {
+        $('#' + id).remove();
         $http.delete(path + 'delete-expense/' + id).success(function(response) {
             if(response.status) {
                 UIkit(response.status, {status: 'danger', timeout: 450});
@@ -103,34 +162,90 @@ myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, 
         });
     }
     
-    var loadTemplate = function(path) {
-        $scope.templateURL = path;
+    $scope.newExpense = function() {
+        $('#refresh').toggleClass('uk-icon-refresh uk-icon-spin');
+        $http.post(path + 'new_expense', {
+            params: {
+                date: angular.element('#date').val(),
+                what: angular.element('#what').val(),
+                priceDollars: angular.element('#dollar').val(),
+                priceCents: angular.element('#cent').val(),
+                categoryName: angular.element('#categoryName').val(),
+                category_id: angular.element('#category_id').val(),
+                subCategory_id: angular.element('#subCategory_id').val(),
+                itemCategory_id: angular.element('#itemCategory_id').val()
+            }
+        }).success(function(response) {
+            if(response.status) {UIkit.notify(response.status, {timeout: 500})}else {
+                $scope.expenses = response;
+                UIkit.notify('All fine', {status: 'success', timeout: 450});
+                $('#refresh').toggleClass('uk-icon-refresh uk-icon-spin');
+                document.getElementById('categoryName').value = '';
+                document.getElementById('category_id').value = '';
+                document.getElementById('subCategory_id').value = '';
+                document.getElementById('itemCategory_id').value = '';
+                document.getElementById('dollar').value = '';
+                document.getElementById('cent').value = '';
+                document.getElementById('what').value = '';
+            }
+        });
     }
     
     //===============================
-    //    module view controllers
+    //    Load Template
     //===============================
 
-    $scope.AddExpense = function() {
-        loadTemplate('../ajax/add_expense.html');
-        setTimeout(function() {
-            document.getElementById('menu-content').innerHTML = $scope.menuBuild;
-            jQuery( '#dl-menu' ).dlmenu();
-        },300);
+    $scope.loadTemplate = function(path) {
+        $scope.templateURL = '../ajax/' + path + '.html';
+    };
+    
+    //===============================
+    //    ng-init
+    //===============================
+
+        $scope.loadChart = function() {
+        var ctx = document.getElementById("myChart");
+        var price = [];
+        var name = [];
+        var color = [];
+        angular.forEach($scope.period, function(val) {
+            price.push(val.priceDollars);
+            color.push(val.color);
+            for(var index in $scope.categories) {
+                if($scope.categories[index]._id === val.category_id) {
+                    name.push($scope.categories[index].categorieName);
+                }
+            }
+        });
+        var data = {
+            datasets: [{
+                data: price,
+                backgroundColor: color,
+                label: 'My dataset' // for legend
+            }],
+            labels: name
+        };
+        new Chart(ctx, {
+            data: data,
+            type: 'pie',
+            options: {
+                elements: {
+                    arc: {
+                        borderColor: "rgba(88, 83, 83, 0.63)"
+                    }
+                }
+            }
+        });
     }
     
-    $scope.Dashboard = function($scope) {
-        loadTemplate('../ajax/main_content.html');
+    $scope.loadCategories = function() {
+        document.getElementById('menu-content').innerHTML = $scope.menuBuild;
+        jQuery( '#dl-menu' ).dlmenu();
     }
     
-    $scope.MannageCategories = function($scope) {
-        loadTemplate('../ajax/mannage_categories.html');
-    }
-    
-    $scope.ListExpenses = function($scope) {
-        viewExp();
-        loadTemplate('../ajax/list_expenses.html');
-    }
+    //===============================
+    //    breadcrumbs
+    //===============================
 
     $scope.breadcrumbsCtrl = function() {
         counter = 0;
@@ -146,6 +261,10 @@ myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, 
         $scope.cats = $scope.subCategories;
         $scope.id = id;
     }
+    
+    //===============================
+    //    navigation categories
+    //===============================
     
     $scope.showSubCategory = function(id, name, subName) {
         if(counter < 3) {
@@ -214,26 +333,30 @@ myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, 
                         UIkit.notify(response.error);
                     }else{
                             $scope.cats = response;
+                            $scope.categories = response;
                             refresh();
                         UIkit.notify("Category created succesfully!", {status:'success', timeout : 450});
                     }
                 });
             }if(sub && !item){
                 $http.post(path + 'new_sub_category/' + val +'/' + sub.id).success(function(response){
+                    console.log(sub);
                     if(response.error){
                         UIkit.notify(response.error);
                     }else{
                             $scope.cats = response;
+                            $scope.subCategories = response;
                             refresh();
                         UIkit.notify("Category created succesfully!", {status:'success', timeout : 450});
                     }
                 });
             }if(item && sub){
-                $http.post(path + 'new_item_category/' + val +'/' + item.id).success(function(response){
+                $http.post(path +'new_item_category/'+ val +'/'+ sub.id +'/'+ item.id).success(function(response){
                     if(response.error){
                         UIkit.notify(response.error);
                     }else{
                             $scope.cats = response;
+                            $scope.itemCategories = response;
                             refresh();
                         UIkit.notify("Category created succesfully!", {status:'success', timeout : 450});
                     }
@@ -277,6 +400,10 @@ myApp.controller('AppCtrl', ['$scope', '$http', '$sce', function($scope, $http, 
             }
         });
     }
+    
+    //===============================
+    //    sort expenses
+    //===============================
     
   $scope.order = function(item, vector) {
     $scope.reverse = vector;

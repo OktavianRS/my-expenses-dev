@@ -24,14 +24,25 @@
 	$.DLMenu.defaults = {
 		// classes for the animation effects
 		animationClasses : { classin : 'dl-animate-in-1', classout : 'dl-animate-out-1' },
-		// callback: click a link that has a sub menu
 		// el is the link element (li); name is the level name
-		onLevelClick : function( el, name ) { return false; },
+		onLevelClick : function( el, name ) {
+            
+        },
 		// callback: click a link that does not have a sub menu
 		// el is the link element (li); ev is the event obj
         onLinkClick : function( el, ev ) {
-            UIkit.notify( 'Selected category: ' + el[0].innerText);
-            document.getElementById('hiddenCategorie').value = el[0].innerText;
+            UIkit.notify( 'Selected category: ' + el[0].innerText, {timeout: 500});
+            document.getElementById('categoryName').value = el[0].innerText;
+            var data = el[0].dataset;
+            if(data.category_id){
+                document.getElementById('category_id').value = data.category_id;
+            }
+            if(data.subcategory_id){
+                document.getElementById('subCategory_id').value = data.subcategory_id;
+            }
+            if(data.itemcategory_id) {
+                document.getElementById('itemCategory_id').value = data.itemcategory_id;
+            }
             return false;
         }
 	};

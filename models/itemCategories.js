@@ -8,6 +8,9 @@ var itemCategorySchema = new Schema({
         type: String,
         unique: true
     },
+    category_id: {
+        type: String
+    },
     subCategorie_id: {
         type: String
     },
@@ -16,7 +19,7 @@ var itemCategorySchema = new Schema({
     }
 });
 
-itemCategorySchema.statics.createItemCategory = function(user, subCategorie_id, itemCategorieName, callback) {
+itemCategorySchema.statics.createItemCategory = function(user,category_id, subCategorie_id, itemCategorieName, callback) {
   async.series([
       requireModels,
       createCategory
@@ -35,7 +38,7 @@ itemCategorySchema.statics.createItemCategory = function(user, subCategorie_id, 
     }
     
     function createCategory(callback) {
-        var itemCategories = { user_id: user, itemCategorieName: itemCategorieName, subCategorie_id: subCategorie_id };
+        var itemCategories = { user_id: user, itemCategorieName: itemCategorieName,category_id: category_id, subCategorie_id: subCategorie_id };
         var itemCategory = new mongoose.models.itemCategory(itemCategories);
         itemCategory.save(callback);
     };

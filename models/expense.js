@@ -10,12 +10,19 @@ var expenseSchema = new Schema({
         required: true
     },
     date: {
-        type: String,
-        required: true
+        type: String
     },
-    category: {
-        type: String,
-        required: true
+    category_id: {
+        type: String
+    },
+    subCategory_id: {
+        type: String
+    },
+    itemCategory_id: {
+        type: String
+    },
+    categoryName: {
+        type: String
     },
     what: {
         type: String,
@@ -32,7 +39,8 @@ var expenseSchema = new Schema({
   
 });
 
-expenseSchema.statics.createExpense = function(user_id, date, category, what, priceDollars, priceCents, callback) {
+expenseSchema.statics.createExpense = function(user_id, data, callback) {
+    console.log(data.params);
   async.series([
       requireModels,
       createUsers
@@ -56,7 +64,7 @@ expenseSchema.statics.createExpense = function(user_id, date, category, what, pr
     }
     
     function createUsers(callback) {
-        var users = {user: user_id, date: date, category: category, what: what, priceDollars: priceDollars, priceCents: priceCents};
+        var users = {user: user_id, date: data.params.date, category_id: data.params.category_id, subCategory_id: data.params.subCategory_id, itemCategory_id: data.params.itemCategory_id, categoryName: data.params.categoryName, what: data.params.what, priceDollars: data.params.priceDollars, priceCents: data.params.priceCents};
         var user = new mongoose.models.Expense(users);
         user.save(callback);
     };

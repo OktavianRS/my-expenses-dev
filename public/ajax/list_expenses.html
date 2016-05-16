@@ -1,5 +1,8 @@
-<h3>List Expenses</h3><input type="search" placeholder="Search" id="jetsSearch">
-<table class="uk-table uk-table-hover uk-table-striped uk-table-condensed">
+<h3>List Expenses</h3>
+<form class="uk-form">
+    <input type="search" placeholder="Search" id="jetsSearch">
+</form>
+<table class="uk-table uk-table-hover uk-table-striped uk-table-condensed" data-ng-init="viewExp()">
 <style>
     .uk-table td, .uk-table th {padding: 1px 1px;}
 </style>
@@ -17,14 +20,7 @@
                 </div>
             </th>
             <th>
-                <div class="uk-button-dropdown uk-width-1-1" data-uk-dropdown>
-                    <button class="uk-button uk-width-1-1 uk-button-primary">Category <i class="uk-icon-caret-down"></i></button>
-                        <div class="uk-dropdown uk-dropdown-small">
-                            <ul class="uk-nav uk-nav-dropdown">
-                                <li ng-repeat="categorie in categories"><a>{{categorie.categorieName}}</a></li>
-                            </ul>
-                        </div>
-                </div>
+                    <button class="uk-button uk-width-1-1 uk-button-primary">Category</button>
             </th>
             <th>
                 <div class="uk-button-dropdown uk-width-1-1" data-uk-dropdown>
@@ -52,12 +48,12 @@
         </tr>
     </thead>
     <tbody id="jetsContent">
-        <tr ng-repeat="expense in expenses | orderBy:predicate:reverse track by expense._id">
+        <tr id="expense._id" ng-repeat="expense in expenses | orderBy:predicate:reverse track by $index">
             <td>{{expense.date}}</td>
-            <td>{{expense.category}}</td>
-            <td>{{expense.what}}</td>
+            <td>{{expense.categoryName | lowercase}}</td>
+            <td>{{expense.what | lowercase}}</td>
             <td>{{expense.priceDollars}}.{{expense.priceCents}}$</td>
-            <td class="uk-text-center"><button class="uk-button uk-button-danger uk-width-1-2" ng-click="deleteExp(expense._id)"><i class="uk-icon-close"></i></button></td>
+            <td class="uk-text-center"><button class="uk-button uk-button-danger uk-width-1-1" ng-click="deleteExp(expense._id)"><i class="uk-icon-close"></i></button></td>
         </tr>
     </tbody>
 </table>

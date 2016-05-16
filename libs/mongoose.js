@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://admin:Beetroot@ds062438.mongolab.com:62438/myexpenses');
+config =require(__dirname + '/../configs/config');
+mongoose.connect(config.database.url);
 
 module.exports = mongoose;
