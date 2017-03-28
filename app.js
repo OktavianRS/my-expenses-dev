@@ -1,10 +1,9 @@
 /**
  * Module dependencies.
  */
-var express = require('express') 
-      ,routes = require('./routes')
-      ,app = module.exports = express.createServer() 
-      ,passport = require('passport') 
+var express = require('express')
+      ,app = module.exports = express.createServer()
+      ,passport = require('passport')
       ,LocalStrategy = require('passport-local').Strategy
       ,GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
       ,User = require(__dirname + '/models/user').User
@@ -14,6 +13,9 @@ var express = require('express')
       ,itemCategory = require(__dirname + '/models/itemCategories').itemCategory
       ,Expense = require(__dirname + '/models/expense').Expense
       ,config =require(__dirname + '/configs/config');
+
+// import controllers
+const userController = require('./controllers/user');
 
 // Configuration
 app.configure(function(){
@@ -37,26 +39,6 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
-// User session
-passport.serializeUser(function(user, done) {
-   done(null, user); 
-});
-
-// User delete session
-passport.deserializeUser(function(username, done) {
-   done(null, {username: username}); 
-});
-
-// User login and password check in database
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-        User.authorize(username, password, function(err, user) {
-            if(err) {return done(null, false)}
-            else{return done(null, user)}
-        });
-    }
-));
-
 passport.use(new GoogleStrategy({
     clientID: config.googleAuth.clientID,
     clientSecret: config.googleAuth.clientSecret,
@@ -76,99 +58,11 @@ passport.use(new GoogleStrategy({
     //===============================
     //    Auth routes
     //===============================
+    app.post('/login', userController.loginUser);
 
-    // if User have session redirect to /user else render login page
-    app.get('/login', function(req, res) {
-        if(req.user) {
-            res.redirect('/user');
-        }else {
-            res.render('login', {
-                title: "Sign In"
-            });
-        }
-    });
+    app.post('/registration', userController.registerUser);
 
-    app.get('/registration', function(req, res, next) {
-        if(req.user) {
-            res.redirect('/user');
-        }else{
-            res.render('registration');
-        }
-    });
-
-    app.get('/registration-failed', function(req, res, next) {
-        if(req.user) {
-            res.redirect('/user');
-        }else{
-            res.render('registration', {
-                title : "Registration",
-                script : "UIkit.notify('User alredy exist');"
-            });  
-        }
-    });
-
-    app.get('/user_not_found', function(req, res, next) {
-        if(!req.user) {
-                res.render('login', {
-                    title: "User not found",
-                    script: "UIkit.notify('Username or password do not match');"
-                });
-        }else{
-            res.redirect('/user');
-        }
-    });
-
-    app.get('/auth/google', passport.authenticate('google', {scope: ['email', 'profile']}));
-    
-    app.get('/auth/google/callback', 
-           passport.authenticate('google', { successRedirect: '/user',
-                                            failureRedirect: '/login'
-        }));
-
-    app.post('/login', function(req, res, next) {
-        if(!req.user){
-            passport.authenticate('local', { 
-                successRedirect: '/user',
-                failureRedirect: '/user_not_found'
-            })(req, res,next);
-        }else{
-            res.redirect('/');
-        }
-    });
-
-    app.post('/registration', function(req, res, next) {
-        if(req.user){
-            res.redirect('/');
-        }else{
-            User.findOne({username : req.body.username }, function(err, result) {
-                if(err) {
-                    next(err);
-                }
-                if(result) {
-                    res.redirect('/registration-failed');
-                }
-                else {
-                    User.create(req.body.username, req.body.password, function(err, user) {
-                        if (err) {
-                            res.send(500, 'Error registering user');
-                        } else {
-                            req.login(user, function(err) {
-                                if (err) { return next(err); }
-                                console.log(user);
-                                Category.createCategory(user._id, 'Shoping', function(log, result) {
-                                    Category.createCategory(user._id, 'Traveling', function(log, result) {
-                                        Category.createCategory(user._id, 'Sport', function(log, result) {
-                                            return res.redirect('/user');
-                                        });
-                                    });
-                                });
-                            });
-                        }
-                    });//end of create
-                }// end of else
-            });// end of findOne
-        }
-    });
+    app.get('/list-users', userController.listUsers);
 
     app.get('/auth/logout', function(req, res) {
         if(req.user){
@@ -192,8 +86,6 @@ app.get('/', function(req, res) {
     }
 });
 
-app.get('/welcome', routes.loader);
-
 app.get('/new-expenses', function(req, res, next) {
     if(req.user) {
         res.render('newExpenses');
@@ -203,31 +95,31 @@ app.get('/new-expenses', function(req, res, next) {
 });
 
 app.use(function(req, res) {
-   res.send("Page Not Found Sorry"); 
+   res.send("Page Not Found Sorry");
 });
 
     //===============================
     //    Get categories
     //===============================
-    
+
     app.get('/get_category', function(req, res, next) {
         Category.find({user_id : req.user.username._id}, function(err, result) {
             res.json(result);
         }) ;
     });
-    
+
     app.get('/get_sub_category', function(req, res, next) {
         subCategory.find({user_id : req.user.username._id}, function(err, result) {
             res.json(result);
         }) ;
     });
-    
+
     app.get('/get_item_category', function(req, res, next) {
         itemCategory.find({user_id : req.user.username._id}, function(err, result) {
             res.json(result);
         }) ;
     });
-    
+
     //===============================
     //    End of get categories
     //===============================
@@ -273,7 +165,7 @@ app.post('/new_sub_category/:name/:category_id', function(req, res, next) {
         res.redirect('/');
     }
 });
-            
+
 app.post('/new_item_category/:name/:category_id/:sub_category_id', function(req, res, next) {
     if(req.user){
         itemCategory.createItemCategory(req.user.username._id, req.params.category_id, req.params.sub_category_id, req.params.name, function(err, result) {
@@ -306,7 +198,7 @@ app.delete('/category/:id', function(req, res) {
                     res.json(result);
                 }) ;
        }
-   }) 
+   })
 });
 
 app.delete('/sub_category/:id', function(req, res) {
@@ -320,7 +212,7 @@ app.delete('/sub_category/:id', function(req, res) {
                     res.json(result);
             });
        }
-   }) 
+   })
 });
 
 app.delete('/item_category/:id', function(req, res) {
@@ -334,7 +226,7 @@ app.delete('/item_category/:id', function(req, res) {
                     res.json(result);
                 });
        }
-   }) 
+   })
 });
 
 app.post('/rename_category/:id/:name', function(req, res) {
@@ -346,7 +238,7 @@ app.post('/rename_category/:id/:name', function(req, res) {
               res.json(result);
           });
       }
-   }); 
+   });
 });
 
 app.post('/rename_sub_category/:id/:name', function(req, res) {
@@ -358,7 +250,7 @@ app.post('/rename_sub_category/:id/:name', function(req, res) {
               res.json(result);
           });
       }
-   }); 
+   });
 });
 
 app.post('/rename_item_category/:id/:name', function(req, res) {
@@ -370,7 +262,7 @@ app.post('/rename_item_category/:id/:name', function(req, res) {
               res.json(result);
           });
       }
-   }); 
+   });
 });
 
 app.get('/user', function(req, res, next) {
@@ -437,11 +329,11 @@ app.delete('/delete-expense/:id', function(req, res, next) {
               Expense.find({user : req.user.username._id}, function(err, result) {
                   res.json(result);
               });
-          } 
+          }
        });
    }else {
        res.redirect('/');
-   } 
+   }
 });
 
 app.listen(config.url.port, function(){

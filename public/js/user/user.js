@@ -1,1 +1,0 @@
-UIkit.notify('My message');

@@ -12,28 +12,24 @@ var categorySchema = new Schema({
     }
 });
 
-categorySchema.statics.createCategory = function(user, categorieName, callback) {
+categorySchema.statics.createCategory = function(user, categorieName) {
   async.series([
       requireModels,
       createCategory
   ], function(err, results) {
-      if(err) {
-          callback(err);
-      }else{
-          callback(null, arguments[1][1][0]);
-      }
+
   });
-    
-    function requireModels(callback) {
-        async.each(Object.keys(mongoose.models), function(modelName, callback) {
-            mongoose.models[modelName].ensureIndexes(callback); 
-        }, callback);
+
+    function requireModels() {
+        async.each(Object.keys(mongoose.models), function(modelName) {
+            mongoose.models[modelName].ensureIndexes();
+        });
     }
-    
-    function createCategory(callback) {
+
+    function createCategory() {
         var categories = { categorieName: categorieName, user_id : user };
         var category = new mongoose.models.Category(categories);
-        category.save(callback);
+        category.save();
     };
 };
 

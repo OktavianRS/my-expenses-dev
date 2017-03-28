@@ -5,7 +5,7 @@ module.exports = {
         'callbackURL' : 'http://localhost:3000/auth/google/callback'
     },
     'url' : {
-        'port': 3000
+        'port': 3001
     },
     'database' : {
         'url' : 'mongodb://admin:Beetroot@ds062438.mongolab.com:62438/myexpenses'
