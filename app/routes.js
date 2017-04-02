@@ -3,6 +3,7 @@
 // See http://blog.mxstbr.com/2016/01/react-apps-with-pages for more information
 // about the code splitting business
 import { getAsyncInjectors } from 'utils/asyncInjectors';
+import axios from 'axios';
 
 const errorLoading = (err) => {
   console.error('Dynamic page loading failed', err); // eslint-disable-line no-console
@@ -11,6 +12,19 @@ const errorLoading = (err) => {
 const loadModule = (cb) => (componentModule) => {
   cb(null, componentModule.default);
 };
+
+function loggedIn() {
+  axios.get('auth-check')
+    .then((response) => (response.data.logged));
+}
+
+function requireAuth(replace) {
+  if (!loggedIn()) {
+    replace({
+      pathname: '/login',
+    });
+  }
+}
 
 export default function createRoutes(store) {
   // Create reusable async injectors using getAsyncInjectors factory
@@ -32,6 +46,9 @@ export default function createRoutes(store) {
         });
 
         importModules.catch(errorLoading);
+      },
+      onEnter(nextState, replace) {
+        requireAuth(replace);
       },
     }, {
       path: '/test',
@@ -67,6 +84,46 @@ export default function createRoutes(store) {
 
         importModules.then(([reducer, sagas, component]) => {
           injectReducer('login', reducer.default);
+          injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
+      path: '/registration',
+      name: 'registration',
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          System.import('containers/Registration/reducer'),
+          System.import('containers/Registration/sagas'),
+          System.import('containers/Registration'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, sagas, component]) => {
+          injectReducer('registration', reducer.default);
+          injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
+      path: '/dashboard',
+      name: 'dashboard',
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          System.import('containers/Dashboard/reducer'),
+          System.import('containers/Dashboard/sagas'),
+          System.import('containers/Dashboard'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, sagas, component]) => {
+          injectReducer('dashboard', reducer.default);
           injectSagas(sagas.default);
           renderRoute(component);
         });

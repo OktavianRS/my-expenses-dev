@@ -10,3 +10,6 @@
  */
 
 export const DEFAULT_LOCALE = 'en';
+export const USER_LOGIN = 'app/App/USER_LOGIN';
+export const NOTIFIED = 'app/App/NOTIFIED';
+export const NOTIFY = 'app/App/NOTIFY';

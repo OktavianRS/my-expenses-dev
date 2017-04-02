@@ -1,19 +1,19 @@
 /*
  *
- * Login
+ * Registration
  *
  */
 
 import React from 'react';
 import { connect } from 'react-redux';
+import selectRegistration from './selectors';
 import { Link } from 'react-router';
-import selectLogin from './selectors';
+
+import { tryRegister } from './actions';
 
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-
-import { tryLogin } from './actions';
 
 // images
 import background from 'img/flat_background.png';
@@ -46,14 +46,15 @@ const styles = {
   },
   header: {
     fontWeight: 100,
-  },
+  }
 };
 
-export class Login extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  handleLogin(e) {
+export class Registration extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+
+  handleRegistration(e) {
     e.preventDefault();
     const { dispatch } = this.props;
-    dispatch(tryLogin({
+    dispatch(tryRegister({
       username: e.target.login.value,
       password: e.target.password.value,
     }));
@@ -62,8 +63,8 @@ export class Login extends React.PureComponent { // eslint-disable-line react/pr
     return (
       <div style={styles.wrapper}>
         <Paper style={styles.paper} zDepth={1} >
-          <h2 style={styles.header}>SignIn</h2>
-          <form onSubmit={this.handleLogin.bind(this)}>
+          <h2 style={styles.header}>SignUp</h2>
+          <form onSubmit={this.handleRegistration.bind(this)}>
             <TextField
               style={styles.input}
               hintText="Login"
@@ -77,15 +78,15 @@ export class Login extends React.PureComponent { // eslint-disable-line react/pr
               fullWidth
             />
             <RaisedButton
-              label="SignIn"
+              label="SignUP"
               primary
               style={styles.button}
               type="submit"
               fullWidth
             />
             <div style={styles.container}>
-              <span>Already have account ? </span>
-              <Link to="/registration">Sign Up</Link>
+              <span>Don't have an account ? </span>
+              <Link to="/login">Sign In</Link>
             </div>
           </form>
         </Paper>
@@ -94,7 +95,7 @@ export class Login extends React.PureComponent { // eslint-disable-line react/pr
   }
 }
 
-const mapStateToProps = selectLogin();
+const mapStateToProps = selectRegistration();
 
 function mapDispatchToProps(dispatch) {
   return {
@@ -102,4 +103,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Registration);

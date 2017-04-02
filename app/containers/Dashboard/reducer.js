@@ -1,25 +1,23 @@
 /*
  *
- * Login reducer
+ * Dashboard reducer
  *
  */
 
 import { fromJS } from 'immutable';
 import {
-  TRY_LOGIN,
-  SUCCESS_LOGIN,
-  FAILED_LOGIN,
+  DEFAULT_ACTION,
 } from './constants';
 
 const initialState = fromJS({});
 
-function loginReducer(state = initialState, action) {
+function dashboardReducer(state = initialState, action) {
   switch (action.type) {
-    case TRY_LOGIN:
+    case DEFAULT_ACTION:
       return state;
     default:
       return state;
   }
 }
 
-export default loginReducer;
+export default dashboardReducer;

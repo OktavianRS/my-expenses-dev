@@ -8,10 +8,39 @@ const setup = require('./middlewares/frontendMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
 const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel ? require('ngrok') : false;
 const resolve = require('path').resolve;
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('../models/user').User;
+const session = require('express-session');
 const app = express();
 
-// If you need a backend, e.g. an API, add your custom backend-specific middleware here
-// app.use('/api', myApi);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(session({ secret: 'i dont know' }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy({
+  passReqToCallback : true,
+},
+  function(req, username, password, done) {
+    User.authorize(req.body.username, req.body.password, function(err, user) {
+        if(err) {return done(null, false)}
+        else{return done(null, user)}
+    });
+  }
+));
+
+// User session
+passport.serializeUser(function(user, done) {
+   done(null, user);
+});
+
+// User delete session
+passport.deserializeUser(function(username, done) {
+   done(null, {username: username});
+});
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {

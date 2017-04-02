@@ -1,15 +1,15 @@
 import { call, put } from 'redux-saga/effects';
 import { takeLatest } from 'redux-saga';
 import request from 'utils/request';
-import { failedLogin } from './actions';
+import { failedRegister } from './actions';
 import { userLogin, notify } from '../App/actions';
 import { push } from 'react-router-redux';
 
 import {
-  TRY_LOGIN,
+  TRY_REGISTER,
 } from './constants';
 
-export function* login(action) {
+export function* register(action) {
   const params = {
     method: 'post',
     headers: {
@@ -18,23 +18,25 @@ export function* login(action) {
     body: JSON.stringify(action.data),
   };
   try {
-    const repos = yield call(request, '/login', params);
+    const repos = yield call(request, '/registration', params);
     if (repos.user) {
       yield put(userLogin(repos.user));
       yield put(push('/dashboard'));
+    } else if (repos.status === 'registered') {
+      yield put(notify('User already registered'));
     } else {
-      yield put(notify('User name or password incorrect!'));
+      yield put(notify('Something went wrong. Registration failure.'));
     }
   } catch (err) {
-    yield put(failedLogin(err));
+    yield put(failedRegister(err));
   }
 }
 
-export function* loginSagga() {
-  yield takeLatest(TRY_LOGIN, login);
+export function* registerSagga() {
+  yield takeLatest(TRY_REGISTER, register);
 }
 
 // All sagas to be loaded
 export default [
-  loginSagga,
+  registerSagga,
 ];

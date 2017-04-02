@@ -86,18 +86,18 @@ schema.statics.create = function(username, password, callback) {
           callback(null, arguments[1][1][0]);
       }
   });
-    
+
     function open(callback) {
         mongoose.connection.on('open', callback);
         callback();
     }
-    
+
     function requireModels(callback) {
         async.each(Object.keys(mongoose.models), function(modelName, callback) {
-            mongoose.models[modelName].ensureIndexes(callback); 
+            mongoose.models[modelName].ensureIndexes(callback);
         }, callback);
     }
-    
+
     function createUsers(callback) {
         var users =         { username : username, password : password };
         var user = new mongoose.models.User(users);
@@ -125,18 +125,18 @@ googleSchema.statics.authorizeGoogle = function(id, token, email, name, callback
                                 callback(null, arguments[1][2][0].google);
                             }
                         });
-                        
+
                         function open(callback) {
                             mongoose.connection.on('open', callback);
                             callback();
                         }
-                    
+
                         function requireModels(callback) {
                             async.each(Object.keys(mongoose.models), function(modelName, callback) {
-                                mongoose.models[modelName].ensureIndexes(callback); 
+                                mongoose.models[modelName].ensureIndexes(callback);
                             }, callback);
                         }
-                        
+
                         function createUsers(callback) {
                             var users = {id: id, token: token, email: email, username: name};
                             var user = new mongoose.models.googleUser(users);

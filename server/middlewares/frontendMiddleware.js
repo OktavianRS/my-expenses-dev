@@ -3,7 +3,6 @@ const express = require('express');
 const path = require('path');
 const compression = require('compression');
 const pkg = require(path.resolve(process.cwd(), 'package.json'));
-
 // import controllers
 const userController = require('../../controllers/user');
 
@@ -33,8 +32,6 @@ const addDevMiddlewares = (app, webpackConfig) => {
       res.sendFile(path.join(process.cwd(), pkg.dllPlugin.path, filename));
     });
   }
-
-
   // routes
 
   // auth
@@ -43,6 +40,8 @@ const addDevMiddlewares = (app, webpackConfig) => {
   app.post('/registration', userController.registerUser);
 
   app.get('/list-users', userController.listUsers);
+
+  app.get('/auth-check', userController.isLogged);
 
   app.get('*', (req, res) => {
     fs.readFile(path.join(compiler.outputPath, 'index.html'), (err, file) => {

@@ -1,25 +1,23 @@
 /*
  *
- * Login reducer
+ * Registration reducer
  *
  */
 
 import { fromJS } from 'immutable';
 import {
-  TRY_LOGIN,
-  SUCCESS_LOGIN,
-  FAILED_LOGIN,
+  TRY_REGISTER,
 } from './constants';
 
 const initialState = fromJS({});
 
-function loginReducer(state = initialState, action) {
+function registrationReducer(state = initialState, action) {
   switch (action.type) {
-    case TRY_LOGIN:
+    case TRY_REGISTER:
       return state;
     default:
       return state;
   }
 }
 
-export default loginReducer;
+export default registrationReducer;
