@@ -3,7 +3,6 @@
 // See http://blog.mxstbr.com/2016/01/react-apps-with-pages for more information
 // about the code splitting business
 import { getAsyncInjectors } from 'utils/asyncInjectors';
-import axios from 'axios';
 
 const errorLoading = (err) => {
   console.error('Dynamic page loading failed', err); // eslint-disable-line no-console
@@ -13,13 +12,22 @@ const loadModule = (cb) => (componentModule) => {
   cb(null, componentModule.default);
 };
 
-function loggedIn() {
-  axios.get('auth-check')
-    .then((response) => (response.data.logged));
+function requireAuth(nextState, replace) {
+  if (!sessionStorage.getItem('user_authorized')) {
+    replace({
+      pathname: '/login',
+    });
+  } else {
+    return;
+  }
 }
 
-function requireAuth(replace) {
-  if (!loggedIn()) {
+function smartRedirect(replace) {
+  if (sessionStorage.getItem('user_authorized')) {
+    replace({
+      pathname: '/dashboard',
+    });
+  } else {
     replace({
       pathname: '/login',
     });
@@ -48,7 +56,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
       onEnter(nextState, replace) {
-        requireAuth(replace);
+        smartRedirect(replace);
       },
     }, {
       path: '/test',
@@ -129,6 +137,9 @@ export default function createRoutes(store) {
         });
 
         importModules.catch(errorLoading);
+      },
+      onEnter(nextState, replace) {
+        requireAuth(nextState, replace);
       },
     }, {
       path: '*',

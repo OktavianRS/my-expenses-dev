@@ -13,3 +13,6 @@ export const DEFAULT_LOCALE = 'en';
 export const USER_LOGIN = 'app/App/USER_LOGIN';
 export const NOTIFIED = 'app/App/NOTIFIED';
 export const NOTIFY = 'app/App/NOTIFY';
+export const GET_USER = 'app/App/GET_USER';
+export const LOGOUT = 'app/App/LOGOUT';
+export const CREATE_CATEGORY = 'app/App/CREATE_CATEGORY';

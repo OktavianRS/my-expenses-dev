@@ -53,11 +53,10 @@ export class Registration extends React.PureComponent { // eslint-disable-line r
 
   handleRegistration(e) {
     e.preventDefault();
-    const { dispatch } = this.props;
-    dispatch(tryRegister({
-      username: e.target.login.value,
-      password: e.target.password.value,
-    }));
+    this.props.register({
+      username: e.target.login_expense.value,
+      password: e.target.password_expense.value,
+    });
   }
   render() {
     return (
@@ -68,14 +67,15 @@ export class Registration extends React.PureComponent { // eslint-disable-line r
             <TextField
               style={styles.input}
               hintText="Login"
-              name="login"
+              name="login_expense"
               fullWidth
             />
             <TextField
-              name="password"
+              name="password_expense"
               style={styles.input}
               hintText="Password"
               fullWidth
+              type="password"
             />
             <RaisedButton
               label="SignUP"
@@ -95,11 +95,18 @@ export class Registration extends React.PureComponent { // eslint-disable-line r
   }
 }
 
+Registration.propTypes = {
+  register: React.PropTypes.func,
+};
+
 const mapStateToProps = selectRegistration();
 
 function mapDispatchToProps(dispatch) {
   return {
     dispatch,
+    register: (data) => {
+      dispatch(tryRegister(data));
+    },
   };
 }
 

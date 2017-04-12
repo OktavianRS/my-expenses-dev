@@ -11,12 +11,19 @@ import {
   FAILED_LOGIN,
 } from './constants';
 
-const initialState = fromJS({});
+const initialState = fromJS({
+  errors: null,
+});
 
 function loginReducer(state = initialState, action) {
   switch (action.type) {
     case TRY_LOGIN:
       return state;
+    case FAILED_LOGIN:
+      return state
+      .setIn(
+        ['errors'], action.err,
+      );
     default:
       return state;
   }

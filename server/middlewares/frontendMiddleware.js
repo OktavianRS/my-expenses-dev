@@ -5,6 +5,7 @@ const compression = require('compression');
 const pkg = require(path.resolve(process.cwd(), 'package.json'));
 // import controllers
 const userController = require('../../controllers/user');
+const categoriesController = require('../../controllers/categories');
 
 // Dev middleware
 const addDevMiddlewares = (app, webpackConfig) => {
@@ -37,11 +38,18 @@ const addDevMiddlewares = (app, webpackConfig) => {
   // auth
   app.post('/login', userController.loginUser);
 
+  app.post('/logout', userController.logoutUser);
+
+  app.get('/get-user-info', userController.getUserInfo);
+
   app.post('/registration', userController.registerUser);
 
   app.get('/list-users', userController.listUsers);
 
   app.get('/auth-check', userController.isLogged);
+
+  // categories
+  app.post('/create-category', categoriesController.create);
 
   app.get('*', (req, res) => {
     fs.readFile(path.join(compiler.outputPath, 'index.html'), (err, file) => {

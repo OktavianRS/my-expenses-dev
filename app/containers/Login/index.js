@@ -52,11 +52,10 @@ const styles = {
 export class Login extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   handleLogin(e) {
     e.preventDefault();
-    const { dispatch } = this.props;
-    dispatch(tryLogin({
-      username: e.target.login.value,
-      password: e.target.password.value,
-    }));
+    this.props.login({
+      username: e.target.login_expense.value,
+      password: e.target.password_expense.value,
+    });
   }
   render() {
     return (
@@ -67,13 +66,15 @@ export class Login extends React.PureComponent { // eslint-disable-line react/pr
             <TextField
               style={styles.input}
               hintText="Login"
-              name="login"
+              type="text"
+              name="login_expense"
               fullWidth
             />
             <TextField
-              name="password"
+              name="password_expense"
               style={styles.input}
               hintText="Password"
+              type="password"
               fullWidth
             />
             <RaisedButton
@@ -94,11 +95,18 @@ export class Login extends React.PureComponent { // eslint-disable-line react/pr
   }
 }
 
+Login.propTypes = {
+  login: React.PropTypes.func,
+};
+
 const mapStateToProps = selectLogin();
 
 function mapDispatchToProps(dispatch) {
   return {
     dispatch,
+    login: (data) => {
+      dispatch(tryLogin(data));
+    },
   };
 }
 

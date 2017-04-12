@@ -1,5 +1,6 @@
 // selectLocationState expects a plain JS object for the routing state
 import { createSelector } from 'reselect';
+import isEmpty from 'utils/isEmpty';
 
 const selectCommon = (state) => state.get('common');
 
@@ -7,6 +8,13 @@ const makeSelectNotification = () => createSelector(
   selectCommon,
   (commonState) => commonState.get('notification').toJS()
 );
+
+const makeSelectUser = () => {
+  return (state) => {
+    const selectUser = state.get('common').get('user');
+    return '';
+  };
+};
 
 const selectLocationState = () => {
   let prevRoutingState;
@@ -27,4 +35,5 @@ const selectLocationState = () => {
 export {
   selectLocationState,
   makeSelectNotification,
+  makeSelectUser,
 };

@@ -1,5 +1,5 @@
 import { call, put } from 'redux-saga/effects';
-import { takeLatest } from 'redux-saga';
+import { takeEvery } from 'redux-saga';
 import request from 'utils/request';
 import { failedLogin } from './actions';
 import { userLogin, notify } from '../App/actions';
@@ -12,6 +12,7 @@ import {
 export function* login(action) {
   const params = {
     method: 'post',
+    credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -21,17 +22,19 @@ export function* login(action) {
     const repos = yield call(request, '/login', params);
     if (repos.user) {
       yield put(userLogin(repos.user));
+      sessionStorage.setItem('user_authorized', true);
       yield put(push('/dashboard'));
     } else {
       yield put(notify('User name or password incorrect!'));
     }
   } catch (err) {
+    console.log(err);
     yield put(failedLogin(err));
   }
 }
 
 export function* loginSagga() {
-  yield takeLatest(TRY_LOGIN, login);
+  yield takeEvery(TRY_LOGIN, login);
 }
 
 // All sagas to be loaded

@@ -9,10 +9,13 @@ import {
   USER_LOGIN,
   NOTIFIED,
   NOTIFY,
+  LOGOUT,
 } from './constants';
 
 const initialState = fromJS({
-  user: {},
+  user: {
+    username: '',
+  },
   notification: {
     notify: false,
     message: '',
@@ -22,9 +25,15 @@ const initialState = fromJS({
 function userReducer(state = initialState, action) {
   switch (action.type) {
     case USER_LOGIN:
-      return state.merge({
-        ...action.data,
-      });
+      return state
+        .setIn(
+          ['user'], action.data,
+        );
+    case LOGOUT:
+      return state
+        .setIn(
+          ['user'], {},
+        );
     case NOTIFY:
       return state
       .setIn(
